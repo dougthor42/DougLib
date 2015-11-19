@@ -22,7 +22,7 @@ import matplotlib.pyplot as pyplot
 
 # Package / Application
 try:
-    # Imports used for unittests
+    # Imports used by unit test runners
     from ..core import binary_file_compare
 #    from . import (__project_name__,
 #                   __version__,

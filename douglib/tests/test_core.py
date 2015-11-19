@@ -20,7 +20,7 @@ import unittest
 
 # Package / Application
 try:
-    # Imports used for unittests
+    # Imports used by unit test runners
     from .. import core
 #    from . import (__project_name__,
 #                   __version__,
@@ -36,7 +36,7 @@ except SystemError:
 #                              __released__,
 #                              )
 #        logging.debug("Imports for Spyder IDE")
-    except ImportError:
+    except (ImportError, SystemError):
          # Imports used by cx_freeze
         from douglib import core
 #        from douglib import (__project_name__,

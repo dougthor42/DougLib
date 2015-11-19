@@ -27,7 +27,7 @@ import scipy.stats as scipystats
 
 # Package / Application
 try:
-    # Imports used for unittests
+    # Imports used by unit test runners
     from . import decorators
 #    from . import (__project_name__,
 #                   __version__,
@@ -88,7 +88,7 @@ def reservoir_sampling(array, num):
     Timing: O(n)
     """
     list_subset = []
-    if num < 0 or not isinstance(num, int):
+    if not isinstance(num, int) or num < 0:
         raise ValueError
     for index, item in enumerate(array):
         # Generate the reservoir

@@ -21,7 +21,7 @@ import matplotlib.pyplot as pyplot
 
 # Package / Application
 try:
-    # Imports used for unittests
+    # Imports used by unit test runners
     from .core import rc_to_radius
 #    from . import (__project_name__,
 #                   __version__,

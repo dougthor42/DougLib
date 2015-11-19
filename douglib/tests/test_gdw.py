@@ -57,7 +57,7 @@ class GDW(unittest.TestCase):
                                fss_excl,
                                )
             # count only die that are probed
-            result = sum(1 for x in gdw_list if x[4] == 'probe')
+            result = sum(1 for x in gdw_list[0] if x[4] == 'probe')
             self.assertEqual(exp_res, result)
 
 

@@ -16,7 +16,7 @@ import unittest
 
 # Package / Application
 try:
-    # Imports used for unittests
+    # Imports used by unit test runners
     from .. import prompts
 #    from . import (__project_name__,
 #                   __version__,

@@ -545,6 +545,52 @@ def max_dist(center, size):
     return dist
 
 
+def max_dist_sqrd(center, size):
+    """
+    Calculates the squared distance from the orgin (0, 0) to the
+    farthest corner of a rectangle.
+
+    Does not take the square of the distance for the sake of speed.
+
+    If the rectangle's center is in the Q1, then the upper-right corner is
+    the farthest away from the origin. If in Q2, then the upper-left corner
+    is farthest away. Etc.
+
+    Returns the magnitude of the largest distance.
+
+    Used primarily for calculating if a die has any part outside of wafer's
+    edge exclusion.
+
+    Parameters:
+    -----------
+    center : tuple of length 2, numerics
+        (x, y) tuple defining the rectangle's center coordinates
+
+    size : tuple of length 2
+        (x, y) tuple that defines the size of the rectangle.
+
+    Returns:
+    --------
+    dist : numeric
+        The distance from the origin (0, 0) to the farthest corner of the
+        rectangle.
+
+    See Also:
+    ---------
+    max_dist :
+        Calculates the distance from the orgin (0, 0) to the
+        farthest corner of a rectangle.
+    """
+    half_x = size[0]/2.
+    half_y = size[1]/2.
+    if center[0] < 0:
+        half_x = -half_x
+    if center[1] < 0:
+        half_y = -half_y
+    dist = (center[0] + half_x)**2 + (center[1] + half_y)**2
+    return dist
+
+
 def rc_to_radius(rc_coord, die_xy, center_rc):
     """
     Converts a die RC coordinate to a radius.

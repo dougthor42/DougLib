@@ -1,1 +1,6 @@
+numpy
+scipy
+wafer_map
+matplotlib
+docopt
 colorama

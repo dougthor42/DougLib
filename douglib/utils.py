@@ -17,10 +17,10 @@
 # Standard Library
 import time
 import datetime
-import colorama
 import os.path
 
 # Third-Party
+import colorama
 
 # Package / Application
 

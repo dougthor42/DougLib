@@ -13,7 +13,7 @@ Created on Tue Jun 17 14:01:24 2014
 from __future__ import print_function, division
 import unittest
 import os.path
-import douglib.gdw as gdw
+from .. import gdw
 
 
 REF_DATA_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)),

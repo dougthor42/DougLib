@@ -18,12 +18,11 @@ import os
 import unittest
 
 # Third-Party
-import matplotlib.pyplot as pyplot
 
 # Package / Application
 try:
     # Imports used by unit test runners
-    from ..core import binary_file_compare
+    pass
 #    from . import (__project_name__,
 #                   __version__,
 #                   __released__,
@@ -32,7 +31,7 @@ try:
 except SystemError:
     try:
         # Imports used by Spyder
-        from .core import binary_file_compare
+        pass
 #        from __init__ import (__project_name__,
 #                              __version__,
 #                              __released__,
@@ -40,7 +39,7 @@ except SystemError:
 #        logging.debug("Imports for Spyder IDE")
     except ImportError:
          # Imports used by cx_freeze
-        from douglib.core import binary_file_compare
+        pass
 #        from douglib import (__project_name__,
 #                             __version__,
 #                             __released__,
@@ -79,37 +78,3 @@ class TestPlotRCD(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(exit=False, verbosity=1)
-#    filepath = os.path.dirname(os.path.realpath(__file__))
-#    fig = pyplot.figure(1)
-#    fig.clf()
-#    ax = fig.add_subplot(1, 1, 1, aspect='equal')
-#    dia = 150
-#    x_axis_min = -dia * 0.55
-#    x_axis_max = dia * 0.55
-#    y_axis_min = -dia * 0.55
-#    y_axis_max = dia * 0.55
-#    ax.axis([x_axis_min, x_axis_max, y_axis_min, y_axis_max])
-#    wafer_map.draw_wafer_outline(ax, dia)
-#    ref_img_path = os.path.join(filepath,
-#                                "reference_data",
-#                                "ref_draw_wafer_outline.png",
-#                                )
-#    tmp_img_path = os.path.join(filepath,
-#                                "reference_data",
-#                                "temp.png",
-#                                )
-#    fig.savefig(tmp_img_path, bbox_inches='tight')
-#
-#    match = binary_file_compare(ref_img_path, tmp_img_path, True)
-#    print(match)
-#
-#    # Delete the tmp_data file if it matches the reference file
-#    if match:
-#        os.remove(tmp_img_path)
-
-#    data_file = os.path.join(REF_DATA_PATH, "wafer_map.csv")
-#
-#    with open(data_file) as open_file:
-#        raw_data = [line.strip().split(',') for line in open_file.readlines()]
-#    data = [(int(a[0]), int(a[1]), float(a[2])) for a in raw_data]
-#    wafer_map.plot_rcd(data)

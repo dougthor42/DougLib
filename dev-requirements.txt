@@ -1,5 +1,5 @@
 numpy
-scipy  --only-binary all
+C:\Users\tph-buildbot\Downloads\scipy-0.17.0-cp34-none-win_amd64.whl
 wafer_map
 matplotlib
 docopt

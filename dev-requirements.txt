@@ -1,5 +1,5 @@
 numpy
-scipy  --only-binary
+scipy  --only-binary all
 wafer_map
 matplotlib
 docopt

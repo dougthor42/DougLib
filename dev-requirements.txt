@@ -1,4 +1,4 @@
-C:\Users\tph-buildbot\Downlaods\numpy-1.11.0rc1+mkl-cp34-cp34m-win_amd64.whl
+C:\Users\tph-buildbot\Downloads\numpy-1.11.0rc1+mkl-cp34-cp34m-win_amd64.whl
 C:\Users\tph-buildbot\Downloads\scipy-0.17.0-cp34-none-win_amd64.whl
 C:\Users\tph-buildbot\Downloads\wxPython_Phoenix-3.0.3.dev1956-cp34-cp34m-win_amd64.whl
 wafer_map

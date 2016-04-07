@@ -22,7 +22,7 @@ pip-install:
     - call %VENV_ROOT%\python34_x64\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
     # Can't upgrade pip in place.
     # See https://github.com/pypa/pip/issues/1299#issuecomment-188198496
-    - python -m pip install -I pip==8.1.0 --no-cache-dir
+    - python -m pip install --upgrade pip==8.1.0 --no-cache-dir
     - pip install -r dev-requirements.txt --no-cache-dir
 
 tests:

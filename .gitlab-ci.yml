@@ -15,6 +15,8 @@ before_script:
 pip-install:
   stage: init
   when: always
+  tags:
+    - python
   script:
     - python -m venv --clear %VENV_ROOT%\python34_x64\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%
     - call %VENV_ROOT%\python34_x64\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
@@ -26,6 +28,8 @@ pip-install:
 tests:
   stage: test
   when: on_success
+  tags:
+    - python
   script:
     - call %VENV_ROOT%\python34_x64\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
     - green -vvv -s 1 -W douglib
@@ -33,6 +37,8 @@ tests:
 tag_bundle:
   stage: tag_deploy
   when: on_success
+  tags:
+    - python
   only:
     - tags
   script:
@@ -45,5 +51,7 @@ tag_bundle:
 clean-up:
   stage: cleanup
   when: always
+  tags:
+    - python
   script:
     - rd /S /Q %VENV_ROOT%\python34_x64\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%

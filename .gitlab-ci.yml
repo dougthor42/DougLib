@@ -32,7 +32,7 @@ tests:
     - python
   script:
     - call %VENV_ROOT%\python34_x64\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
-    - green -vvv -s 1 -W douglib
+    - green -vvv -s 1 -W -t douglib
 
 tag_bundle:
   stage: tag_deploy

@@ -317,7 +317,7 @@ class TestSignificantSampleSize(unittest.TestCase):
     def test_known_values(self):
         """ known value testing for sample size """
         for (N, ci, E, p), expected in self.known_values:
-            result = core.significant_sample_size_ci(N, ci, E, p)
+            result = core.significant_sample_size(N, E=E, p=p, CI=ci)
             self.assertEqual(expected, result)
 
 

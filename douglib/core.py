@@ -214,7 +214,7 @@ def clip(x, min_max, clipval=None):
     >>> clip(10, (0, 1))
     1
     >>> clip(10, (0, 1), clipval=("Zero", "One"))
-    u'One'
+    'One'
     >>> clip(5.23, (3.24, 8.91))
     5.23
     """
@@ -655,15 +655,6 @@ def rc_to_radius_sqrd(rc_coord, die_xy, center_rc):
     return x_dist + y_dist
 
 
-@decorators.Deprecated
-def generator_example(num):
-    """ Example of a generator. Runs through numbers 0-4 and then repeats. """
-    num = 0
-    while num < 5:
-        yield num
-        num += 1
-
-
 def frange(start, stop, step):
     """
     Generator that creates an arbitrary-stepsize range.
@@ -888,30 +879,30 @@ def to_engineering_notation(number, num_digits=5):
     Examples:
     ---------
     >>> to_engineering_notation(123456)
-    u'123.46k'
+    '123.46k'
     >>> to_engineering_notation(-0.003216)
-    u'-3.216m'
+    '-3.216m'
 
     Using ``num_digits``:
 
     >>> to_engineering_notation(1000036, 2)
-    u'1M'
+    '1M'
     >>> to_engineering_notation(1000036, 6)
-    u'1.00004M'
+    '1.00004M'
 
     >>> to_engineering_notation(-0.003216, 1)
-    u'-3m'
+    '-3m'
     >>> to_engineering_notation(-0.003216, 3)
-    u'-3.22m'
+    '-3.22m'
 
     >>> to_engineering_notation(32165, 1)
-    u'3e+01k'
+    '3e+01k'
     >>> to_engineering_notation(32165, 2)
-    u'32k'
+    '32k'
     >>> to_engineering_notation(32165, 3)
-    u'32.2k'
+    '32.2k'
     >>> to_engineering_notation(32165, 4)
-    u'32.16k'
+    '32.16k'
     """
     # FIXME: change num_digits to num_dec and only affect decimal places
     # FIXME: to_engineering_notation(32165, 1) should return '30k'
@@ -952,21 +943,6 @@ def to_engineering_notation(number, num_digits=5):
 
 
 @decorators.Obsolete
-def die_to_radius(rc_coord, die_size):
-    """ attempts to determine the die's XY location from the rc_coord
-
-    We'll need to find out which die is the center of the wafer. The issue is
-    that we don't use any negative row column coordinates. If we're just doing
-    MDH26 then I already know that the wafer center is between columns 32 and
-    33 and is the middle of row 24...
-    """
-    center_xy = (32.5, 24)
-    die_x = die_size[0] * (rc_coord[1] - center_xy[0])
-    die_y = die_size[1] * (rc_coord[0] - center_xy[1])
-    radius = math.sqrt(die_x**2 + die_y**2)
-    return radius
-
-
 def cei_ink_map(probe_list, bad_xy):
     """
     Generate a txt file that is readable by CEI for pick-and-place.
@@ -1270,16 +1246,63 @@ def significant_subsample(array, CI=0.95, E=0.02, p=0.5):
     Timing: O(n)
         - Uses reservoir_sampling which is O(n)
     """
-    n = significant_sample_size_ci(len(array), CI, E, p)
+    n = significant_sample_size(len(array), CI=CI, E=E, p=p)
     return reservoir_sampling(array, n)
 
 
-def significant_sample_size(N, Z=1.96, E=0.02, p=0.5):
+def significant_sample_size(N, **kwargs):
     """
-    Returns the sample size needed to provide a given z-score
+    Returns the sample size needed to provide a given z-score (or confidence interval)
     and margin of error from a population of size ``N`` and response
     distribution ``p``. Assumes a normal distribution.
 
+    Parameters:
+    -----------
+    N : int
+        The population size.
+
+    Z : float, optional [1.96]
+        The Z-score for the desired confidence interval. If given, ``CI``
+        must not be given. Defaults to a confidence interval of 95%.
+
+    CI : float, optional [0.95]
+        The desired confidence interval. Must be between 0 and 1 inclusive.
+        If given, ``Z`` must not be given. Defaults to a Z-score of 1.96.
+
+    E : float, optional [0.02]
+        The desired margin of error. Must be between 0 and 1 inclusive.
+
+    p : float, optional [0.5]
+        Response distribution. This is what the expected response rate is.
+        If you aren't sure, use 0.5 as that results in the largest sample
+        size. Must be between 0 and 1 inclusive.
+
+    Returns:
+    --------
+    n : int
+        The number of samples needed.
+
+    Examples:
+    ---------
+    >>> significant_sample_size(1000)
+    706
+    >>> significant_sample_size(1000, Z=1.6448, E=0.05)
+    213
+    >>> significant_sample_size(1000, Z=1.6448, E=0.1)
+    63
+    >>> significant_sample_size(1000, Z=1.6448, E=0.1, p=0.3)
+    53
+    >>> significant_sample_size(10000)
+    1936
+    >>> significant_sample_size(1000, CI=0.95, E=0.02)
+    706
+    >>> significant_sample_size(1000, CI=0.96, E=0.02)
+    725
+    >>> significant_sample_size(1000, CI=0.95, E=0.03)
+    516
+
+    Notes:
+    ------
     The sample size for the statistically significant random sample is given
     by:
 
@@ -1306,36 +1329,6 @@ def significant_sample_size(N, Z=1.96, E=0.02, p=0.5):
     Note that on the website: :math:`Z(c)^2`, where :math:`Z` is
     a function of :math:`c`.
 
-    Parameters:
-    -----------
-    N : int
-        The population size.
-
-    Z : float [1.96]
-        The Z-score for the desired confidence interval.
-
-    E : float [0.02]
-        The desired margin of error. Must be between 0 and 1 inclusive.
-
-    p : float [0.5]
-        Response distribution. This is what the expected response rate is.
-        If you aren't sure, use 0.5 as that results in the largest sample
-        size. Must be between 0 and 1 inclusive.
-
-    Returns:
-    --------
-    n : int
-        The number of samples needed.
-
-    Examples:
-    ---------
-    >>> significant_sample_size(1000)
-    706
-    >>> significant_sample_size(1000, 1.6448, 0.05)
-    213
-    >>> significant_sample_size(1000, 1.6448, 0.1)
-    63
-
     Misc:
     -----
     Typical Z-scrore / confidence interval values are:
@@ -1351,16 +1344,30 @@ def significant_sample_size(N, Z=1.96, E=0.02, p=0.5):
 
     Example:
 
-    >>> significant_sample_size(1000, 1.96, 0.02)       # CI = 95%
+    >>> # Given a population of 1000, a CI of 95%, and a MoE of 2%:
+    >>> significant_sample_size(1000, CI=0.95, E=0.02)
     706
-    >>> significant_sample_size(1000, 1.880794, 0.02)   # CI = 94%
+    >>> # a 1% change in CI means a 2.5% change in sample size:
+    >>> significant_sample_size(1000, CI=0.94, E=0.02)  # 1% change in CI
     688
-    >>> significant_sample_size(1000, 1.96, 0.03)       # 1% worse error
+    >>> # a 1% change in margin of error means a 27% change in sample size:
+    >>> significant_sample_size(1000, CI=0.95, E=0.03)  # 1% change in error
     516
     """
+    # Error if both the Confidence Interval and the Z-score are given
+    if "CI" in kwargs and "Z" in kwargs:
+        raise RuntimeError("Arguments `CI` and `Z` are mutually exclusive.")
+
+    # Set the defaults
+    Z = 1.96 if "Z" not in kwargs.keys() else kwargs['Z']
+    E = 0.02 if "E" not in kwargs.keys() else kwargs['E']
+    p = 0.50 if "p" not in kwargs.keys() else kwargs['p']
+    if "CI" in kwargs:
+        Z = scipystats.norm.interval(kwargs["CI"])[-1]
+
     return int(N * Z**2 * p*(1-p) / ((N - 1) * E**2 + (Z**2 * p*(1-p))))
 
-
+@decorators.Deprecated
 def significant_sample_size_ci(N, CI=0.95, E=0.02, p=0.5):
     """
     Same as significant_sample_size, but allows the user to enter in a

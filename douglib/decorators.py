@@ -394,7 +394,7 @@ class Timed(Decorator):
 class Traced(Decorator):
     """
     Decorator.
-    Prints out the called function with arguements.
+    Prints out the called function with arguments.
     """
     def __init__(self, func):
         """ Init attributes """

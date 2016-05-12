@@ -184,24 +184,6 @@ class PickXatY(unittest.TestCase):
         self.fail("shouldn't ever get here")
 
 
-#class MaxDist(unittest.TestCase):
-#    """ Unit Testing of the max_dist function """
-#    # (center_xy, size_xy, expected_result)
-#    known_values = (((0, 0), (1, 1), 0.70710678),
-#                    ((0, 0), (2, 2), 1.41421356),
-#                    ((0, 0), (3, 4), 2.5),
-#                    ((0, 0), (6, 8), 5),
-#                    ((0, 0), (4.32, 6.12), 3.745557368),
-#                    ((.25, 1.5), (4, 6), 5.03115295),
-#                    ((-1, 1.25), (6, 8), 6.60018939),
-#                    )
-#
-#    def test_known_values(self):
-#        for center, size, expected_result in self.known_values:
-#            result = core.max_dist(center, size)
-#            self.assertAlmostEqual(expected_result, result)
-
-
 class ReservoirSampling(unittest.TestCase):
     """ Tests for the Reservior Sampling function """
     dataset = range(100)
@@ -353,21 +335,6 @@ class TestSortByColumn(unittest.TestCase):
             core.sort_by_column(self.array, 0, hello=True, aaa=False)
 
 
-def check_wafer_map():
-    import wafer_map
-    # Test the wafer map stuff
-    data = []
-    file_path = r"X:\WinPython27\projects\douglib\test_data\wafer_map.csv"
-    with open(file_path) as of:
-        for line in of:
-            data.append(tuple([float(i) for i in line.strip().split(',')]))
-
-    wafer_map.plot_wafer_map(data,
-                             plot_range=(0, 75),
-                             wafer=(150, 5, 5),
-                             center_rc=(24, 31.5))
-
-
 def generic_test_equal(function, known_values):
     """ Generic known-value testing of assertNotEqual """
     for params in known_values:
@@ -386,5 +353,3 @@ def generic_test_equal(function, known_values):
 
 if __name__ == "__main__":
     unittest.main(exit=False, verbosity=1)
-#    check_wafer_map()
-#    check_gdw()

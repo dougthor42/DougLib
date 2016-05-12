@@ -209,17 +209,17 @@ class ClassDecorator(unittest.TestCase):
                          "str representation of TestClass")
 
     def test_doc(self):
-        """ Check that  my_class.__doc__ returns correctly """
+        """ Check that my_class.__doc__ returns correctly """
         self.assertEqual(self.my_class.__doc__,
                          " TestClass docstring ")
 
     def test_decor(self):
-        """ Check that  my_class.__decor__ returns correctly """
+        """ Check that my_class.__decor__ returns correctly """
         self.assertEqual(self.my_class.__decor__,
                          "ExampleDecorator")
 
     def test_decordoc(self):
-        """ Check that  my_class.__decordoc__ returns correctly """
+        """ Check that my_class.__decordoc__ returns correctly """
         self.assertEqual(self.my_class.__decordoc__,
                          " ExampleDecorator docstring ")
 

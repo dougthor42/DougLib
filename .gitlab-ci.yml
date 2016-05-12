@@ -6,23 +6,32 @@ stages:
 
 variables:
   VENV_ROOT: C:\temp\builds
+  VENV_PY34: C:\temp\builds\python34_x64
 
 # Set environment vars
 before_script:
+  - REM ==================== Before Script ====================
+  - echo %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%
   - call C:\WinPython34\scripts\env.bat
   - python -c "import sys;print(sys.version)"
 
-pip-install:
+  # Clear pip cache because it sometimes causes issues.
+  - rd /S /Q C:\Users\tph-buildbot\AppData\Local\pip\Cache
+  - REM ~~~~~~~~~~~~~~~~~~~~ End Before Script ~~~~~~~~~~~~~~~~~~~~
+
+pip_install:
   stage: init
   when: always
   tags:
     - python
   script:
-    - python -m venv --clear %VENV_ROOT%\python34_x64\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%
-    - call %VENV_ROOT%\python34_x64\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
+    - REM ==================== pip_install ====================
+    - python -m venv --clear %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%
+    - call %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
     # Can't upgrade pip in place.
     # See https://github.com/pypa/pip/issues/1299#issuecomment-188198496
     - python -m pip install --upgrade pip==8.1.0 --no-cache-dir
+    - pip install -r requirements.txt --no-cache-dir
     - pip install -r dev-requirements.txt --no-cache-dir
 
 tests:
@@ -31,7 +40,8 @@ tests:
   tags:
     - python
   script:
-    - call %VENV_ROOT%\python34_x64\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
+    - REM ==================== tests ====================
+    - call %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
     - green -vvv -s 1 -W -t douglib
 
 tag_bundle:
@@ -42,16 +52,18 @@ tag_bundle:
   only:
     - tags
   script:
-    - call %VENV_ROOT%\python34_x64\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
+    - REM ==================== tag_bundle ====================
+    - call %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
     - python setup.py sdist bdist_wheel
   artifacts:
     paths:
       - dist/*.whl
 
-clean-up:
+clean_up:
   stage: cleanup
   when: always
   tags:
     - python
   script:
-    - rd /S /Q %VENV_ROOT%\python34_x64\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%
+    - REM ==================== clean_up ====================
+    - rd /S /Q %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%

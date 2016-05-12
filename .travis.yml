@@ -1,11 +1,40 @@
+#################################
+# General setup
+#################################
 language: python
-python:
-  - "2.7"
+
+sudo: false
+
+matrix:
+  include:
+  - python: "2.7"
+  - python: "3.4"
+
+notifications:
+  email: false
+
+#################################
+# Build Lifecycle
+#################################
 # command to install dependencies
 before_install:
-  - sudo apt-get install python-wxgtk2.8 python-wxtools wx2.8-i18n
+  - echo "----- before_install -----"
+
 install:
+  - echo "----- install -----"
+
+  # Start the install of everything
+  - pip install --upgrade pip
+  - pip install -r requirements.txt
   - pip install -r dev-requirements.txt
-# command to run tests
+
 script:
-  - python --version
+  - echo "----- script -----"
+  - python -c "import sys;print(sys.version);print(sys.path)"
+  - green douglib -vvv --run-coverage
+
+after_success:
+  - echo "----- after_success -----"
+
+  # Send coverage information to coveralls.io
+  - coveralls

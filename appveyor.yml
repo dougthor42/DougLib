@@ -42,9 +42,9 @@ environment:
 #     PYTHON_VERSION: "3.4.1"
 #     PYTHON_ARCH: "32"
 
-#   - PYTHON: "C:\\Python34-x64"
-#     PYTHON_VERSION: "3.4.1"
-#     PYTHON_ARCH: "64"
+   - PYTHON: "C:\\Python34-x64"
+     PYTHON_VERSION: "3.4.1"
+     PYTHON_ARCH: "64"
 
 install:
   - ECHO "Filesystem root:"
@@ -67,21 +67,22 @@ install:
   - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
 
   # install dependencies
-  - "%CMD_IN_ENV% pip install -r dev-requirements.txt"
+  - "%CMD_IN_ENV% python -m pip install -r requirements.txt
+  - "%CMD_IN_ENV% python -m pip install -r dev-requirements.txt"
 
 build: false  # Not a C# project, build stuff at the test step instead.
 
 test_script:
   # Build the compiled extension and run the project tests
   #- "%CMD_IN_ENV% nosetests"
-  - "%CMD_IN_ENV% python --version"
+  - "%CMD_IN_ENV% green douglib -vvv -s 1"
 
-#after_test:
+after_test:
 #  # if tests OK, create whl package
-#  - "%CMD_IN_ENV% python setup.py bdist_wheel bdist_wininst"
-#  - ps: "ls dist"
+  - "%CMD_IN_ENV% python setup.py bdist_wheel"
+  - ps: "ls dist"
 
-#artifacts:
+artifacts:
   # Archive the generated wheel package in the ci.appveyor.com build report.
-#  - path: dist\*
+  - path: dist\*
 

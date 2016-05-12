@@ -14,9 +14,6 @@ before_script:
   - echo %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%
   - call C:\WinPython34\scripts\env.bat
   - python -c "import sys;print(sys.version)"
-
-  # Clear pip cache because it sometimes causes issues.
-  - rd /S /Q C:\Users\tph-buildbot\AppData\Local\pip\Cache
   - REM ~~~~~~~~~~~~~~~~~~~~ End Before Script ~~~~~~~~~~~~~~~~~~~~
 
 pip_install:
@@ -26,6 +23,9 @@ pip_install:
     - python
   script:
     - REM ==================== pip_install ====================
+    # Clear pip cache because it sometimes causes issues.
+    - rd /S /Q C:\Users\tph-buildbot\AppData\Local\pip\Cache
+
     - python -m venv --clear %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%
     - call %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
     # Can't upgrade pip in place.
@@ -50,7 +50,9 @@ tests:
   script:
     - REM ==================== tests ====================
     - call %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
-    - green -vvv -s 1 -W -t douglib
+    - pip install nose2 --no-cache-dir
+#    - green -vvv -s 1 -W -t douglib
+    - nose2 douglib
 
 tag_bundle:
   stage: tag_deploy

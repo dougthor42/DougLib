@@ -31,7 +31,15 @@ pip_install:
     # Can't upgrade pip in place.
     # See https://github.com/pypa/pip/issues/1299#issuecomment-188198496
     - python -m pip install --upgrade pip==8.1.0 --no-cache-dir
-    - pip install -r requirements.txt --no-cache-dir
+
+    # Scipy doesn't have a wheel on PyPI, so I need to install it
+    # from a downloaded wheel. Also means I can't use `pip install -r
+    # requirements.txt` to install any other items :-(
+#    - pip install -r requirements.txt --no-cache-dir
+    - pip install numpy --no-cache-dir
+    - pip install .\build_reqs\scipy-0.17.0-cp34-none-win_amd64.whl
+    - pip install matplotlib --no-cache-dir
+    - pip install colorama --no-cache-dir
     - pip install -r dev-requirements.txt --no-cache-dir
 
 tests:

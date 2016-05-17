@@ -51,7 +51,7 @@ tests:
     - REM ==================== tests ====================
     - call %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
     - pip install nose2 --no-cache-dir
-#    - green -vvv -s 1 -W -t douglib
+    - green -vvv -s 1 -W -t douglib
     - nose2 douglib
 
 tag_bundle:

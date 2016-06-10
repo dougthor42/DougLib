@@ -15,6 +15,7 @@ Created on Wed May 14 15:29:34 2014
 # Standard Library
 import os.path
 import unittest
+import random
 
 # Third-Party
 
@@ -184,7 +185,7 @@ class PickXatY(unittest.TestCase):
         self.fail("shouldn't ever get here")
 
 
-class ReservoirSampling(unittest.TestCase):
+class TestReservoirSampling(unittest.TestCase):
     """ Tests for the Reservior Sampling function """
     dataset = range(100)
     good_lengths = [0, 1, 10, 34, 127]
@@ -192,6 +193,10 @@ class ReservoirSampling(unittest.TestCase):
 
     def setUp(self):
         """ Gets run before every test """
+        pass
+
+    def tearDown(self):
+        """ Runs after the tests if and only if setUp succeeded. """
         pass
 
     def test_subset(self):
@@ -217,9 +222,11 @@ class ReservoirSampling(unittest.TestCase):
                               length,
                               )
 
-    def tearDown(self):
-        """ Runs after the tests if and only if setUp succeeded. """
-        pass
+    def test_seeded_value(self):
+        random.seed(12345)
+        expected = [53, 94, 2, 23, 40, 82, 95, 96, 25, 38]
+        result = core.reservoir_sampling(self.dataset, 10)
+        self.assertEqual(result, expected)
 
 
 class ReedholmDieNameToRC(unittest.TestCase):

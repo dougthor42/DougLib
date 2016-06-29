@@ -1,0 +1,4 @@
+douglib.core
+============
+
+Hello!

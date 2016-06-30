@@ -6,7 +6,10 @@
 Welcome to DougLib's documentation!
 ===================================
 
+Here be text.
+
 Contents:
+=========
 
 .. toctree::
    :maxdepth: 2

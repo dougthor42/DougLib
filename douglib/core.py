@@ -70,20 +70,20 @@ def reservoir_sampling(array, num):
     Adapted from Wikipedia page on Reservoir Sampling:
     http://en.wikipedia.org/wiki/Reservoir_sampling
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     array : list
         The list of items to choose from
 
     num : int
         The number of elements to choose from ``array``
 
-    Returns:
-    --------
+    Returns
+    -------
     list_subset : list
         A random subset of ``array`` which is ``num`` items long.
 
-    Misc:
+    Notes
     -----
     Timing: O(n)
     """
@@ -108,20 +108,20 @@ def round_to_multiple(x, y):
     """
     Rounds ``x`` to a multiple of ``y``.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     x : numeric
         The value to be rounded.
 
     y : numeric
         The multiplier to round to.
 
-    Returns:
-    --------
+    Returns
+    -------
     ``x`` rounded to the nearest multiple of ``y``
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> round_to_multiple(1.1234, 0.1)
     1.1
     >>> round_to_multiple(4.767, 0.3)
@@ -152,8 +152,8 @@ def sort_by_column(big_list, *args, **kwargs):
     that you entered (A) will be modified. ``inplace=False`` returns a copy
     of the 2D array and is the default.
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> my_array = [[3,5],[2,4],[1,7]]
     >>> sort_by_column(my_array, 1)     # sort by column 1 (2nd col) and copy
     [[2, 4], [3, 5], [1, 7]]
@@ -193,24 +193,22 @@ def clip(x, min_max, clipval=None):
     returns those values instead. ``clipval`` must be a list or
     tuple of length 2.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     x : numeric
         The value to clip
-
     min_max : sequence of numerics, length 2
         The (minimum, maximum) value to return.
-
     clipval : sequence of length 2, any type, optional
         The items to return when x is outside of (x_min, x_max). This
         sequence can be made up of any type.
 
-    Returns:
-    --------
+    Returns
+    -------
     A value >= x_min and <= x_max, or clipval[0] or clipval[1]
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> clip(10, (0, 1))
     1
     >>> clip(10, (0, 1), clipval=("Zero", "One"))
@@ -247,8 +245,8 @@ def rescale(x, orig_scale, new_scale=(0, 1)):
 
     Default new scale range is 0 to 1 inclusive.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     x : numeric
         The value to rescale.
 
@@ -258,13 +256,13 @@ def rescale(x, orig_scale, new_scale=(0, 1)):
     new_scale : sequence of numerics, length 2, optional
         The new (min, max) value that the rescaled ``x`` should reference
 
-    Returns:
-    --------
+    Returns
+    -------
     result : float
         The rescaled ``x`` value
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> rescale(5, (10, 20), (0, 1))
     -0.5
     >>> rescale(27, (0, 200), (0, 5))
@@ -288,8 +286,8 @@ def rescale_clip(x, orig_scale, new_scale=(0, 1)):
     below ``new_min`` or above ``new_max`` is return as ``new_min`` or
     ``new_max``, respectively
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> rescale_clip(5, (10, 20), (0, 1))
     0
     >>> rescale_clip(15, (10, 20), (0, 1))
@@ -297,8 +295,8 @@ def rescale_clip(x, orig_scale, new_scale=(0, 1)):
     >>> rescale_clip(25, (10, 20), (0, 1))
     1
 
-    See Also:
-    ---------
+    See Also
+    --------
     rescale :
         Rescales x to run over a new range.
     """
@@ -318,24 +316,24 @@ def nearest_indicies(data, x):
     """
     Find the two array positions (indices) around x.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     data : array-like
         A sequence of [x1, x2, ... xn] values
 
     x : numeric
         The value to to search for in ``data``
 
-    Returns:
-    --------
+    Returns
+    -------
     If an exact match is found, returns a list of length 1 which contains
     the index of the element ``x``. Otherwise, returns a list of
     length 2 containing the two indices that surround ``x``.
 
     If there are more than two possible locations, it only returns the first.
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> nearest_indicies([1,4,6,8,10,15], 3)
     [0, 1]
     >>> nearest_indicies([1,4,6,8,10,15], 6)
@@ -343,8 +341,8 @@ def nearest_indicies(data, x):
     >>> nearest_indicies([1,4,6,8,6,10], 7)     # only returns 1st match
     [2, 3]
 
-    See Also:
-    ---------
+    See Also
+    --------
     pick_x_at_y :
         Returns a x value for a given y value from a 2D dataset.
 
@@ -372,20 +370,20 @@ def position(array, item):
     Emulates Mathematica's ``Position[]`` function as best as possible,
     but for 1D arrays only.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     array : sequence
         The list of items to search through.
     item : any
         The item to search for.
 
-    Returns:
-    --------
+    Returns
+    -------
     Returns the a generator for the index(es) of item in array. Returns
     an empty array if not found.
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> list(position([0, 1, 2, 3, 4], 2))
     [2]
     >>> list(position(["a", "B", "C", "d"], "d"))
@@ -393,7 +391,7 @@ def position(array, item):
     >>> list(position(['1', '1', 'a', 15, 1], '1'))
     [0, 1]
 
-    Misc:
+    Notes
     -----
     Timing: O(1)
     """
@@ -408,12 +406,12 @@ def threshold_1d_array(array, y):
     If the function is not monotomically increasing, it returns the
     first value found.
 
-    See Also:
-    ---------
+    See Also
+    --------
     interpolate_1d_array :
         Takes a fractional X value and returns an interpolated Y value.
 
-    Misc:
+    Notes
     -----
     Timing: O(n)
     """
@@ -433,12 +431,12 @@ def interpolate_1d_array(array, x):
     Emulates LabVIEW's ``Interpolate 1D Array`` function.
     Takes a fractional X value and returns an interpolated Y value.
 
-    See Also:
-    ---------
+    See Also
+    --------
     threshold_1d_array :
         Takes a Y value and returns a fractional index for that Y value.
 
-    Misc:
+    Notes
     -----
     Timing: O(1)
     """
@@ -453,16 +451,16 @@ def pick_x_at_y(xy_array, y):
     """
     Manual linear interpolation at a POI.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     xy_array : list
         A list in the format [(x1,y1), (x2,y2),...]
 
     y : numeric
         The y value to look for.
 
-    Returns:
-    --------
+    Returns
+    -------
     x : numeric
         The x value for the given y.
     """
@@ -487,16 +485,16 @@ def nanpercentile(a, percentile):
     Performs a numpy.percentile(a, percentile) calculation while
     ignoring NaN values.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     a : array
         A 1D list or 1D numpy array
 
     percentile : float in range [0,100]
         Percentile to compute which must be between 0 and 100 inclusive.
 
-    Returns:
-    --------
+    Returns
+    -------
     pcntile : ndarray
         A new array holding the result.
 
@@ -521,22 +519,22 @@ def max_dist(center, size):
     Used primarily for calculating if a die has any part outside of wafer's
     edge exclusion.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     center : tuple of length 2, numerics
         (x, y) tuple defining the rectangle's center coordinates
 
     size : tuple of length 2
         (x, y) tuple that defines the size of the rectangle.
 
-    Returns:
-    --------
+    Returns
+    -------
     dist : numeric
         The distance from the origin (0, 0) to the farthest corner of the
         rectangle.
 
-    See Also:
-    ---------
+    See Also
+    --------
     max_dist_sqrd :
         Calculates the squared distance from the orgin (0, 0) to the
         farthest corner of a rectangle.
@@ -561,22 +559,22 @@ def max_dist_sqrd(center, size):
     Used primarily for calculating if a die has any part outside of wafer's
     edge exclusion.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     center : tuple of length 2, numerics
         (x, y) tuple defining the rectangle's center coordinates
 
     size : tuple of length 2
         (x, y) tuple that defines the size of the rectangle.
 
-    Returns:
-    --------
+    Returns
+    -------
     dist : numeric
         The distance from the origin (0, 0) to the farthest corner of the
         rectangle.
 
-    See Also:
-    ---------
+    See Also
+    --------
     max_dist :
         Calculates the distance from the orgin (0, 0) to the
         farthest corner of a rectangle.
@@ -597,8 +595,8 @@ def rc_to_radius(rc_coord, die_xy, center_rc):
 
     Returns sqrt(rc_to_radius_sqrd)
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     rc_coord : sequence of ints, length 2
         The (row, column) grid coordinate die
 
@@ -609,13 +607,13 @@ def rc_to_radius(rc_coord, die_xy, center_rc):
         The grid (row, column) coordinate which defines the origin (center
         of the wafer).
 
-    Returns:
-    --------
+    Returns
+    -------
     radius : float
         The radius of the *center* of the die in question.
 
-    See Also:
-    ---------
+    See Also
+    --------
     rc_to_radius_sqrd :
         Converts a die RC coordinate to a squared radius.
     """
@@ -628,8 +626,8 @@ def rc_to_radius_sqrd(rc_coord, die_xy, center_rc):
 
     Returns the squared radius for the sake of speed.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     rc_coord : sequence of ints, length 2
         The (row, column) grid coordinate die
 
@@ -640,13 +638,13 @@ def rc_to_radius_sqrd(rc_coord, die_xy, center_rc):
         The grid (row, column) coordinate which defines the origin (center
         of the wafer).
 
-    Returns:
-    --------
+    Returns
+    -------
     radius : float
         The squared radius of the *center* of the die in question.
 
-    See Also:
-    ---------
+    See Also
+    --------
     rc_to_radius :
         Converts a die RC coordinate to a radius.
     """
@@ -669,8 +667,8 @@ def frange(start, stop, step):
     This means that there's a possibliity that rounding the last point
     to the ``step`` precision will equal ``stop``. See examples.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     start : numeric
         The number to start at
 
@@ -680,13 +678,13 @@ def frange(start, stop, step):
     step : numeric
         The delta between points
 
-    Returns:
-    --------
+    Returns
+    -------
     frange : generator
         A generator that returns the numbers in the range on demand.
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> list(frange(1.5, 6.5, 0.5))
     [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0]
 
@@ -744,18 +742,18 @@ def from_engineering_notation(string):
     Converts a number string with order-of-magnitude sufffix to a
     floating point number.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     string : string
         The string to convert.
 
-    Returns:
-    --------
+    Returns
+    -------
     number : float
         The numerical equivalent of ``string``.
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> from_engineering_notation("1.23m")
     0.00123
     >>> from_engineering_notation("4.5k")
@@ -763,8 +761,8 @@ def from_engineering_notation(string):
     >>> from_engineering_notation("-6.84u")
     -6.84e-06
 
-    See Also:
-    ---------
+    See Also
+    --------
     to_engineering_notation :
         Converts a floating point number to string with order-of-magnitude
         suffix.
@@ -863,21 +861,21 @@ def to_engineering_notation(number, num_digits=5):
 
     Always uses smaller of two options.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     number : numeric
         The number to convert.
 
     num_digits : int [5]
         The maximum number of digits to display in ``string``.
 
-    Returns:
-    --------
+    Returns
+    -------
     engr_string : string
         An engineering-formatted string representation of ``number``.
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> to_engineering_notation(123456)
     '123.46k'
     >>> to_engineering_notation(-0.003216)
@@ -1212,8 +1210,8 @@ def significant_subsample(array, CI=0.95, E=0.02, p=0.5):
     See docstring for the significant_sample_size function for more
     information.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     array : sequence
         The array to create a subset of.
 
@@ -1228,20 +1226,20 @@ def significant_subsample(array, CI=0.95, E=0.02, p=0.5):
         If you aren't sure, use 0.5 as that results in the largest sample
         size. Must be between 0 and 1 inclusive.
 
-    Returns:
-    --------
+    Returns
+    -------
     subarray : sequence
         A random subset of ``array`` that is ``N`` items long, where ``N``
         is defined by the input parameters.
 
-    See Also:
-    ---------
+    See Also
+    --------
     significant_sample_size :
         Returns the sample size needed to provide a given z-score
         and margin of error from a population of size ``N`` and response
         distribution ``p``. Assumes a normal distribution.
 
-    Misc:
+    Notes
     -----
     Timing: O(n)
         - Uses reservoir_sampling which is O(n)
@@ -1256,8 +1254,8 @@ def significant_sample_size(N, **kwargs):
     and margin of error from a population of size ``N`` and response
     distribution ``p``. Assumes a normal distribution.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     N : int
         The population size.
 
@@ -1277,13 +1275,13 @@ def significant_sample_size(N, **kwargs):
         If you aren't sure, use 0.5 as that results in the largest sample
         size. Must be between 0 and 1 inclusive.
 
-    Returns:
-    --------
+    Returns
+    -------
     n : int
         The number of samples needed.
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> significant_sample_size(1000)
     706
     >>> significant_sample_size(1000, Z=1.6448, E=0.05)
@@ -1301,8 +1299,8 @@ def significant_sample_size(N, **kwargs):
     >>> significant_sample_size(1000, CI=0.95, E=0.03)
     516
 
-    Notes:
-    ------
+    Notes
+    -----
     The sample size for the statistically significant random sample is given
     by:
 
@@ -1379,8 +1377,8 @@ def significant_sample_size_ci(N, CI=0.95, E=0.02, p=0.5):
     Uses the scipy.stats.norm.interval method to calculate the Z-score based
     on the confidence interval.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     N : int
         The population size.
 
@@ -1395,13 +1393,13 @@ def significant_sample_size_ci(N, CI=0.95, E=0.02, p=0.5):
         If you aren't sure, use 0.5 as that results in the largest sample
         size. Must be between 0 and 1 inclusive.
 
-    Returns:
-    --------
+    Returns
+    -------
     n : int
         The number of samples needed.
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> significant_sample_size_ci(10000)
     1936
     >>> significant_sample_size_ci(1000, 0.95, 0.02)
@@ -1411,8 +1409,8 @@ def significant_sample_size_ci(N, CI=0.95, E=0.02, p=0.5):
     >>> significant_sample_size_ci(1000, 0.95, 0.03)
     516
 
-    See Also:
-    ---------
+    See Also
+    --------
     significant_sample_size :
         Returns the sample size needed to provide a given z-score
         and margin of error from a population of size ``N`` and response

@@ -3,13 +3,7 @@
 """
 Created on Mon Aug 26 11:02:21 2013
 
-@author: dthor
-
 A library holding common subroutines and classes that I've created.
-Remember PEP8 Style Guides:
-Classes are CamelCase (MyClassName)
-functions are lowercase with underscores (my_function)
-CONSTANTS are UPPERCASE with underscores (MAX_CONSTANT)
 """
 # ---------------------------------------------------------------------------
 ### Imports
@@ -74,7 +68,6 @@ def reservoir_sampling(array, num):
     ----------
     array : list
         The list of items to choose from
-
     num : int
         The number of elements to choose from ``array``
 
@@ -83,9 +76,9 @@ def reservoir_sampling(array, num):
     list_subset : list
         A random subset of ``array`` which is ``num`` items long.
 
-    Notes
-    -----
-    Timing: O(n)
+
+    .. note::
+       Timing: O(n)
     """
     list_subset = []
     if not isinstance(num, int) or num < 0:
@@ -118,7 +111,8 @@ def round_to_multiple(x, y):
 
     Returns
     -------
-    ``x`` rounded to the nearest multiple of ``y``
+    rounded : numeric
+        ``x`` rounded to the nearest multiple of ``y``
 
     Examples
     --------
@@ -136,14 +130,29 @@ def round_to_multiple(x, y):
 
 def sort_by_column(big_list, *args, **kwargs):
     """
-    Sorts an 2D list by columns defined by args.
+    Sorts an 2D list by columns defined by ``args``.
 
-    Will sort by multiple columns if *args is longer than 1 element.
+    Will sort by multiple columns if ``args`` is longer than 1 element.
 
+    Parameters
+    ----------
+    big_list : list
+        The list to sort.
+    *args : int
+        The column(s) to sort by.
+    inplace : bool, optional [False]
+        If ``True``, the variable sent to ``big_list`` will be modified. If
+        ``False``, a copy of the list is made.
+
+    Returns
+    -------
+    sorted : list
+        A copy or reference to the sorted list.
+
+    Notes
+    -----
     ``sort_by_column(A, 3, 1)`` will sort by the 4th column (index 3) and then
     by 2nd column (index 1).
-
-    The only keyword arguement is 'inplace' and defaults to False.
 
     ``sort_by_column(A, 1)`` is the same as ``sort_by_column(A, 1,
     inplace=False)``
@@ -157,7 +166,7 @@ def sort_by_column(big_list, *args, **kwargs):
     >>> my_array = [[3,5],[2,4],[1,7]]
     >>> sort_by_column(my_array, 1)     # sort by column 1 (2nd col) and copy
     [[2, 4], [3, 5], [1, 7]]
-    >>> sort_by_column(my_array, 1, inplace=True)   # modifies my_aray
+    >>> sort_by_column(my_array, 1, inplace=True)   # modifies my_array
     >>> print(my_array)
     [[2, 4], [3, 5], [1, 7]]
     """
@@ -189,9 +198,10 @@ def sort_by_column(big_list, *args, **kwargs):
 
 def clip(x, min_max, clipval=None):
     """
-    Clips the value x to x_min or x_max. If ``clipval`` is defined, then
-    returns those values instead. ``clipval`` must be a list or
-    tuple of length 2.
+    Clips the value x to x_min or x_max.
+
+    If ``clipval`` is defined, then returns those values instead.
+    ``clipval`` must be a list or tuple of length 2.
 
     Parameters
     ----------
@@ -205,7 +215,7 @@ def clip(x, min_max, clipval=None):
 
     Returns
     -------
-    A value >= x_min and <= x_max, or clipval[0] or clipval[1]
+    clipped : any
 
     Examples
     --------
@@ -238,10 +248,10 @@ def rescale(x, orig_scale, new_scale=(0, 1)):
     """
     Rescales x to run over a new range.
 
-    Rescales x (which was part of scale original_min to original_max)
-    to run over a range new_min to new_max such
-    that the value x maintains position on the new scale new_min to new_max.
-    If x is outside of xRange, then y will be outside of yRange.
+    Rescales x (which was part of scale ``original_min`` to ``original_max``)
+    to run over a range (``new_min`` to ``new_max``) such
+    that the value ``x`` maintains position on the new scale.
+    If ``x`` is outside of xRange, then y will be outside of yRange.
 
     Default new scale range is 0 to 1 inclusive.
 
@@ -249,12 +259,10 @@ def rescale(x, orig_scale, new_scale=(0, 1)):
     ----------
     x : numeric
         The value to rescale.
-
     orig_scale : sequence of numerics, length 2
-        The (min, max) value that ``x`` typically ranges over.
-
+        The ``(min, max)`` value that ``x`` typically ranges over.
     new_scale : sequence of numerics, length 2, optional
-        The new (min, max) value that the rescaled ``x`` should reference
+        The new ``(min, max)`` value that the rescaled ``x`` should reference
 
     Returns
     -------
@@ -269,6 +277,10 @@ def rescale(x, orig_scale, new_scale=(0, 1)):
     0.675
     >>> rescale(1.5, (0, 1), (0, 10))
     15.0
+
+    .. seealso::
+
+       :func:`rescale_clip`
     """
     original_min, original_max = orig_scale
     new_min, new_max = new_scale
@@ -282,9 +294,23 @@ def rescale(x, orig_scale, new_scale=(0, 1)):
 
 def rescale_clip(x, orig_scale, new_scale=(0, 1)):
     """
-    Same as ``rescale``, but also clips the new data. Any result that is
+    Same as :func:`rescale`, but also clips the new data. Any result that is
     below ``new_min`` or above ``new_max`` is return as ``new_min`` or
     ``new_max``, respectively
+
+    Parameters
+    ----------
+    x : numeric
+        The value to rescale.
+    orig_scale : sequence of numerics, length 2
+        The ``(min, max)`` value that ``x`` typically ranges over.
+    new_scale : sequence of numerics, length 2, optional
+        The new ``(min, max)`` value that the rescaled ``x`` should reference
+
+    Returns
+    -------
+    result : float
+        The rescaled ``x`` value
 
     Examples
     --------
@@ -295,10 +321,9 @@ def rescale_clip(x, orig_scale, new_scale=(0, 1)):
     >>> rescale_clip(25, (10, 20), (0, 1))
     1
 
-    See Also
-    --------
-    rescale :
-        Rescales x to run over a new range.
+    .. seealso::
+
+       :func:`rescale`
     """
     original_min, original_max = orig_scale
     new_min, new_max = new_scale
@@ -320,17 +345,15 @@ def nearest_indicies(data, x):
     ----------
     data : array-like
         A sequence of [x1, x2, ... xn] values
-
     x : numeric
         The value to to search for in ``data``
 
     Returns
     -------
-    If an exact match is found, returns a list of length 1 which contains
-    the index of the element ``x``. Otherwise, returns a list of
-    length 2 containing the two indices that surround ``x``.
+    indices : list
+        The indices which surround the value ``x``. See Notes for more
+        information.
 
-    If there are more than two possible locations, it only returns the first.
 
     Examples
     --------
@@ -341,14 +364,20 @@ def nearest_indicies(data, x):
     >>> nearest_indicies([1,4,6,8,6,10], 7)     # only returns 1st match
     [2, 3]
 
-    See Also
-    --------
-    pick_x_at_y :
-        Returns a x value for a given y value from a 2D dataset.
 
-    Misc:
-    -----
-    Timing: O(n)
+    .. seealso::
+
+       :func:`pick_x_at_y`
+
+
+    .. note::
+
+       + Timing: O(n)
+       + If an exact match is found, returns a list of length 1 which contains
+         the index of the element ``x``. Otherwise, returns a list of
+         length 2 containing the two indices that surround ``x``.
+       + If there are more than two possible locations, it only returns
+         the first.
     """
     # First find the position of the nearest element.
     # The nearest element is the one where the Abs(data-x) is at a minimum.
@@ -379,8 +408,9 @@ def position(array, item):
 
     Returns
     -------
-    Returns the a generator for the index(es) of item in array. Returns
-    an empty array if not found.
+    indices : generator
+        The a generator for the index(es) of item in array. Returns an
+        empty generator if ``item`` is not found.
 
     Examples
     --------
@@ -391,9 +421,9 @@ def position(array, item):
     >>> list(position(['1', '1', 'a', 15, 1], '1'))
     [0, 1]
 
-    Notes
-    -----
-    Timing: O(1)
+    .. note::
+
+       Timing: O(1)
     """
     return (i for i, x in enumerate(array) if x == item)
 
@@ -402,18 +432,30 @@ def threshold_1d_array(array, y):
     """
     Emulates LabVIEW's ``Threshold 1D Array`` function.
 
-    Takes a Y value and returns a fractional index for that Y value.
+    Takes a ``Y`` value and returns a fractional index for that ``Y`` value.
     If the function is not monotomically increasing, it returns the
     first value found.
 
-    See Also
-    --------
-    interpolate_1d_array :
-        Takes a fractional X value and returns an interpolated Y value.
+    Parameters
+    ----------
+    array : list
+        A 1D list of numeric values.
+    y : numeric
+        The value to search for.
 
-    Notes
-    -----
-    Timing: O(n)
+    Returns
+    -------
+    fractional_index : float
+        A fractional index representing the location of ``y``.
+
+
+    .. seealso::
+
+       :func:`interpolate_1d_array`
+
+    .. note::
+
+       Timing: O(n)
     """
     indicies = nearest_indicies(array, y)
     if len(indicies) == 1:
@@ -428,19 +470,32 @@ def threshold_1d_array(array, y):
 
 def interpolate_1d_array(array, x):
     """
-    Emulates LabVIEW's ``Interpolate 1D Array`` function.
-    Takes a fractional X value and returns an interpolated Y value.
+    Emulates LabVIEW's ``Interpolate 1D Array`` function. Takes a fractional
+    index value ``x`` and returns an interpolated ``Y`` value.
 
-    See Also
-    --------
-    threshold_1d_array :
-        Takes a Y value and returns a fractional index for that Y value.
+    Parameters
+    ----------
+    array : list
+        A 1D list of numeric values.
+    x : numeric
+        The fractional index to inerpolate to.
+
+    Returns
+    -------
+    y : float
+        The interpolated value.
 
     Notes
     -----
-    Timing: O(1)
+    This function only performs linear interpolation.
+
+    .. seealso::
+
+       :func:`threshold_1d_array`
+
+    .. note:
+       Timing: O(1)
     """
-    # Find the floor of x
     i = int(math.floor(x))
     j = int(math.ceil(x))
     inter_y = (array[j] - array[i]) * (x - i) + array[i]
@@ -454,7 +509,7 @@ def pick_x_at_y(xy_array, y):
     Parameters
     ----------
     xy_array : list
-        A list in the format [(x1,y1), (x2,y2),...]
+        A list in the format ``[(x1,y1), (x2,y2), ...]``
 
     y : numeric
         The y value to look for.
@@ -462,7 +517,7 @@ def pick_x_at_y(xy_array, y):
     Returns
     -------
     x : numeric
-        The x value for the given y.
+        The ``x`` value for the given ``y``.
     """
     y_array = [row[1] for row in xy_array]
     indicies = nearest_indicies(y_array, y)
@@ -480,6 +535,7 @@ def pick_x_at_y(xy_array, y):
     return x
 
 
+@decorators.Obsolete
 def nanpercentile(a, percentile):
     """
     Performs a numpy.percentile(a, percentile) calculation while
@@ -507,10 +563,10 @@ def nanpercentile(a, percentile):
 
 def max_dist(center, size):
     """
-    Calculates the distance from the orgin (0, 0) to the
+    Calculates the distance from the orgin ``(0, 0)`` to the
     farthest corner of a rectangle.
 
-    If the rectangle's center is in the Q1, then the upper-right corner is
+    If the rectangle's center is in Q1, then the upper-right corner is
     the farthest away from the origin. If in Q2, then the upper-left corner
     is farthest away. Etc.
 
@@ -522,10 +578,10 @@ def max_dist(center, size):
     Parameters
     ----------
     center : tuple of length 2, numerics
-        (x, y) tuple defining the rectangle's center coordinates
+        ``(x, y)`` tuple defining the rectangle's center coordinates
 
     size : tuple of length 2
-        (x, y) tuple that defines the size of the rectangle.
+        ``(x, y)`` tuple that defines the size of the rectangle.
 
     Returns
     -------
@@ -533,11 +589,10 @@ def max_dist(center, size):
         The distance from the origin (0, 0) to the farthest corner of the
         rectangle.
 
-    See Also
-    --------
-    max_dist_sqrd :
-        Calculates the squared distance from the orgin (0, 0) to the
-        farthest corner of a rectangle.
+
+    .. seealso::
+
+       :func:`max_dist_sqrd`
     """
     dist = math.sqrt(max_dist_sqrd(center, size))
     return dist
@@ -545,16 +600,16 @@ def max_dist(center, size):
 
 def max_dist_sqrd(center, size):
     """
-    Calculates the squared distance from the orgin (0, 0) to the
+    Calculates the squared distance from the orgin ``(0, 0)`` to the
     farthest corner of a rectangle.
 
-    Does not take the square of the distance for the sake of speed.
+    **Does not take the square of the distance for the sake of speed.**
 
     If the rectangle's center is in the Q1, then the upper-right corner is
     the farthest away from the origin. If in Q2, then the upper-left corner
     is farthest away. Etc.
 
-    Returns the magnitude of the largest distance.
+    Returns the squared magnitude of the largest distance.
 
     Used primarily for calculating if a die has any part outside of wafer's
     edge exclusion.
@@ -562,22 +617,21 @@ def max_dist_sqrd(center, size):
     Parameters
     ----------
     center : tuple of length 2, numerics
-        (x, y) tuple defining the rectangle's center coordinates
+        ``(x, y)`` tuple defining the rectangle's center coordinates
 
     size : tuple of length 2
-        (x, y) tuple that defines the size of the rectangle.
+        ``(x, y)`` tuple that defines the size of the rectangle.
 
     Returns
     -------
-    dist : numeric
+    dist : float
         The distance from the origin (0, 0) to the farthest corner of the
         rectangle.
 
-    See Also
-    --------
-    max_dist :
-        Calculates the distance from the orgin (0, 0) to the
-        farthest corner of a rectangle.
+
+    .. seealso::
+
+       :func:`max_dist`
     """
     half_x = size[0]/2.
     half_y = size[1]/2.
@@ -593,18 +647,14 @@ def rc_to_radius(rc_coord, die_xy, center_rc):
     """
     Converts a die RC coordinate to a radius.
 
-    Returns sqrt(rc_to_radius_sqrd)
-
     Parameters
     ----------
     rc_coord : sequence of ints, length 2
-        The (row, column) grid coordinate die
-
+        The ``(row, column)`` grid coordinate die
     die_xy : sequence of numerics, length 2
-        The die (x, y) size. Typically in units of mm.
-
+        The die ``(x, y)`` size. Typically in units of mm.
     center_rc : sequence of numerics, length 2
-        The grid (row, column) coordinate which defines the origin (center
+        The grid ``(row, column)`` coordinate which defines the origin (center
         of the wafer).
 
     Returns
@@ -612,10 +662,9 @@ def rc_to_radius(rc_coord, die_xy, center_rc):
     radius : float
         The radius of the *center* of the die in question.
 
-    See Also
-    --------
-    rc_to_radius_sqrd :
-        Converts a die RC coordinate to a squared radius.
+
+    .. seealso::
+       :func:`rc_to_radius_sqrd`
     """
     return math.sqrt(rc_to_radius_sqrd(rc_coord, die_xy, center_rc))
 
@@ -629,13 +678,11 @@ def rc_to_radius_sqrd(rc_coord, die_xy, center_rc):
     Parameters
     ----------
     rc_coord : sequence of ints, length 2
-        The (row, column) grid coordinate die
-
+        The ``(row, column)`` grid coordinate die
     die_xy : sequence of numerics, length 2
-        The die (x, y) size. Typically in units of mm.
-
+        The die ``(x, y)`` size. Typically in units of mm.
     center_rc : sequence of numerics, length 2
-        The grid (row, column) coordinate which defines the origin (center
+        The grid ``(row, column)`` coordinate which defines the origin (center
         of the wafer).
 
     Returns
@@ -643,10 +690,9 @@ def rc_to_radius_sqrd(rc_coord, die_xy, center_rc):
     radius : float
         The squared radius of the *center* of the die in question.
 
-    See Also
-    --------
-    rc_to_radius :
-        Converts a die RC coordinate to a radius.
+
+    .. seealso::
+       :func:`rc_to_radius`
     """
     x_dist = (die_xy[0] * (rc_coord[1] - center_rc[1]))**2
     y_dist = (die_xy[1] * (rc_coord[0] - center_rc[0]))**2
@@ -660,12 +706,8 @@ def frange(start, stop, step):
     Creates a list generator that returns ``[start, start + step,
     start + step * 2, ..., stop)``
 
-    Note that the interval is closed-open ``[)``. ``stop`` is not supposed
-    to be part of the returned list generator.
-
-    That said, this function does not accout for floating-point math errors.
-    This means that there's a possibliity that rounding the last point
-    to the ``step`` precision will equal ``stop``. See examples.
+    Note that the interval is closed-open ``[)``. The ``stop`` value is
+    not supposed to be part of the returned list generator.
 
     Parameters
     ----------
@@ -683,6 +725,12 @@ def frange(start, stop, step):
     frange : generator
         A generator that returns the numbers in the range on demand.
 
+    .. note::
+
+       This function does not accout for floating-point math errors.
+       This means that there's a possibliity that rounding the last point
+       to the ``step`` precision will equal ``stop``. See examples.
+
     Examples
     --------
     >>> list(frange(1.5, 6.5, 0.5))
@@ -692,6 +740,7 @@ def frange(start, stop, step):
 
     >>> list(frange(1.2, 1.8, 0.2))
     [1.2, 1.4, 1.5999999999999999, 1.7999999999999998]
+
     """
     r = start
     while r < stop:
@@ -761,11 +810,9 @@ def from_engineering_notation(string):
     >>> from_engineering_notation("-6.84u")
     -6.84e-06
 
-    See Also
-    --------
-    to_engineering_notation :
-        Converts a floating point number to string with order-of-magnitude
-        suffix.
+    .. seealso::
+
+       :func:`to_engineering_notation`
     """
     numbers = {str(i) for i in range(10)}
     prefixes = {"y": 1e-24,
@@ -852,21 +899,23 @@ def num_to_unit_prefix_str(number, num_dec=5):
 
 def to_engineering_notation(number, num_digits=5):
     """
-    Converts a floating point number to string with order-of-magnitude
+    Converts a floating point number to string with an SI order-of-magnitude
     suffix.
 
-    **NOTE: THIS FUNCTION CAN REDUCE SIGNIFICANT FIGURES**
+    .. caution::
 
-    Only uses suffixes that are multiples of 3.
+       This function can reduce significant digits.
 
-    Always uses smaller of two options.
+    .. note::
+
+       + Only uses suffixes that are multiples of 3.
+       + Always uses smaller of two options.
 
     Parameters
     ----------
     number : numeric
         The number to convert.
-
-    num_digits : int [5]
+    num_digits : int, optional
         The maximum number of digits to display in ``string``.
 
     Returns
@@ -1021,12 +1070,36 @@ def cei_ink_map(probe_list, bad_xy):
 
 def rcd_to_2d_array(data, missing=0):
     """
+    Converts array of tuples to 2D array (matrix-like).
+
     Takes an array of tuples of (Row (y), column (x), data) and converts
     it to a 2D array where the element index is the row and column value.
-    Missing data is user-defined, defaulted to 0.
-    data must be sorted by Row then by Column.
-    """
 
+    Parameters
+    ----------
+    data : list of tuples
+        The data to convert, in the format ``[(x1, y1, d1),
+        (x2, y2, d2), ...]``
+    missing : any, optional
+        The value to replace use for missing points.
+
+    Returns
+    -------
+    array : list
+        The matrix-like array.
+
+    Example
+    -------
+    >>> data = [[0, 0, 'a'], [0, 1, 'b'], [0, 2, 'c'],
+    ...         [1, 0, 'd'], [1, 1, 'e'], [1, 2, 'f'],
+    ...         [2, 0, 'g'], [2, 2, 'i'],
+    ...         ]
+    >>> rcd_to_2d_array(data, 'X')
+    [['a', 'b', 'c'], ['d', 'e', 'f'], ['g', 'X', 'i']]
+
+    .. warning::
+        ``data`` must be sorted by Row (y) then by Column (x) values.
+    """
     #sort_by_column(data, 1)
     max_x = max([i[1] for i in data])   # note that x = column, y = row
     max_y = max([i[0] for i in data])
@@ -1049,12 +1122,36 @@ def rcd_to_2d_array(data, missing=0):
 
 def xyd_to_2d_array(data, missing=0):
     """
-    Takes an array of tuples of (X-column, Y-row, data) and converts
-    it to a 2D array where the element index is the Y and X value.
-    Missing data is user-defined, defaulted to 0.
-    data must be sorted by X then by Y.
-    """
+    Converts array of tuples to 2D array (matrix-like).
 
+    Takes an array of ``(x, y, data)`` tuples and converts
+    it to a 2D array where the element index is the Y and X value.
+
+    Parameters
+    ----------
+    data : list of tuples
+        The data to convert, in the format ``[(x1, y1, d1),
+        (x2, y2, d2), ...]``
+    missing : any, optional
+        The value to replace use for missing points.
+
+    Returns
+    -------
+    array : list
+        The matrix-like array.
+
+    Example
+    -------
+    >>> data = [[0, 0, 'a'], [0, 1, 'b'], [0, 2, 'c'],
+    ...         [1, 0, 'd'], [1, 1, 'e'], [1, 2, 'f'],
+    ...         [2, 0, 'g'], [2, 2, 'i'],
+    ...         ]
+    >>> xyd_to_2d_array(data, 'X')
+    [['a', 'b', 'c'], ['d', 'e', 'f'], ['g', 'X', 'i']]
+
+    .. warning::
+        ``data`` must be sorted by X then by Y values.
+    """
     #sort_by_column(data, 1)
     max_x = max([i[0] for i in data])   # note that x = column, y = row
     max_y = max([i[1] for i in data])
@@ -1073,12 +1170,40 @@ def xyd_to_2d_array(data, missing=0):
 
 
 def convert_rcd_xyd(rcd):
-    """ Converts row-column-data to x-y-data or vise-versa. """
+    """
+    Converts a list of ``(row, column, data)`` to ``(x, y, data)`` or
+    vise-versa.
+
+    Simply swaps the first two items in each sublist. Also sorts the new
+    list by ``x`` then ``y``.
+
+    Parameters
+    ----------
+    rcd : list of tuples
+        The data to convert.
+
+    Returns
+    -------
+    list of tuples
+        A copy of ``rcd`` with sublist index 0 and 1 swapped, sorted.
+    """
     return sort_by_column([(_i[1], _i[0], _i[2]) for _i in rcd], 0, 1)
 
 
 def array_2d_to_str(array_2d):
-    """ Converts a 2D array to a spreadsheet string. """
+    """
+    Converts a 2D array to a spreadsheet string.
+
+    Parameters
+    ----------
+    array_2d : list of lists
+        The array to convert.
+
+    Returns
+    -------
+    str
+        A csv-compatible string.
+    """
     output_str = ""
     for line in array_2d:
         output_str += ''.join([str(i) for i in line]) + "\n"
@@ -1086,7 +1211,19 @@ def array_2d_to_str(array_2d):
 
 
 def reedholm_die_to_rc(die_name):
-    """ Converts the Reedholm die name ("x27y54") to row-column tuple """
+    """
+    Converts the Reedholm die name ("x27y54") to row-column tuple
+
+    Parameters
+    ----------
+    die_name : str
+        The die name to parse.
+
+    Returns
+    -------
+    tuple :
+        The ``(row, column)`` grid coordinate.
+    """
     split_die_name = die_name.split("y")
     if len(split_die_name[0]) == 1:
         x_col = 0
@@ -1101,27 +1238,34 @@ def reedholm_die_to_rc(die_name):
 
 
 #@decorators.Timed
-def binary_file_compare(file1,
-                        file2,
-                        ):
+def binary_file_compare(file1, file2):
     """
-    Compares two files byte-by-byte. Returns a failcode:
-    0: files match
-    1: different sizes
-    2: different first or last byte
-    3: different data in statistically significant random sample
-    4: different data in full search
+    Compares two files byte-by-byte.
 
-    The sample size for the statistically significant random sample is given
-    by:
+    Parameters
+    ----------
+    file1 : str
+        The path to the master file
+    file2 : str
+        The path to the 2nd file.
 
-    n = N * Z^2 * p(1-p) / ((N-1) E^2 + (Z^2 * p(1-p)))
+    Returns
+    -------
+    failcode : int
+        A flag providing information on where the difference is located.
 
-    where n is the sample size, N is the population size, Z is the z-score
-    for a given confidence interval, E is the margin of error, and p
-    is the response distribution (what the expected response rate is).
+    Notes
+    -----
 
-    Info from http://www.raosoft.com/samplesize.html
+    Fail codes can be:
+
+    + 0: files match
+    + 1: different sizes
+    + 2: different first or last byte
+    + 3: different data in statistically significant random sample
+    + 4: different data in full search
+
+    See :func:`significant_subsample` for more information on failcode ``3``.
     """
     failcode = 0
     with open(file1, 'rb') as ref:
@@ -1190,10 +1334,31 @@ def binary_file_compare(file1,
 
 def hash_file(file_object, hasher, blocksize=65536):
     """
-    Hashes a file using a given haching type.
+    Hashes a file using a given hashing type.
 
-    file_object must already be opened.
-    examples of valid hashers are hashlib.md5(), hashlib.sha256(), etc.
+    Parameters
+    ----------
+    file_object : io.IOBase object
+        The stream to hash.
+    hasher : hashlib.HASH object
+        The hasher to use.
+    blocksize : int, optional
+        The block size to read from ``file_object``.
+
+    Returns
+    -------
+    digest :
+        The hash digest of the stream.
+
+
+    .. note::
+
+       ``file_object`` must already be opened.
+
+    .. hint::
+
+       Examples of valid hashers are ``hashlib.md5()``, ``hashlib.sha256()``,
+       etc.
     """
     buf = file_object.read(blocksize)
     while len(buf) > 0:
@@ -1232,17 +1397,14 @@ def significant_subsample(array, CI=0.95, E=0.02, p=0.5):
         A random subset of ``array`` that is ``N`` items long, where ``N``
         is defined by the input parameters.
 
-    See Also
-    --------
-    significant_sample_size :
-        Returns the sample size needed to provide a given z-score
-        and margin of error from a population of size ``N`` and response
-        distribution ``p``. Assumes a normal distribution.
 
-    Notes
-    -----
-    Timing: O(n)
-        - Uses reservoir_sampling which is O(n)
+    .. seealso::
+
+       :func:`significant_sample_size`, :func:`reservoir_sampling`
+
+    .. note::
+
+       + Timing: O(n)
     """
     n = significant_sample_size(len(array), CI=CI, E=E, p=p)
     return reservoir_sampling(array, n)
@@ -1250,26 +1412,22 @@ def significant_subsample(array, CI=0.95, E=0.02, p=0.5):
 
 def significant_sample_size(N, **kwargs):
     """
-    Returns the sample size needed to provide a given z-score (or confidence interval)
-    and margin of error from a population of size ``N`` and response
+    Returns the sample size needed to provide a given z-score (or confidence
+    interval) and margin of error from a population of size ``N`` and response
     distribution ``p``. Assumes a normal distribution.
 
     Parameters
     ----------
     N : int
         The population size.
-
     Z : float, optional [1.96]
         The Z-score for the desired confidence interval. If given, ``CI``
         must not be given. Defaults to a confidence interval of 95%.
-
     CI : float, optional [0.95]
         The desired confidence interval. Must be between 0 and 1 inclusive.
         If given, ``Z`` must not be given. Defaults to a Z-score of 1.96.
-
     E : float, optional [0.02]
         The desired margin of error. Must be between 0 and 1 inclusive.
-
     p : float, optional [0.5]
         Response distribution. This is what the expected response rate is.
         If you aren't sure, use 0.5 as that results in the largest sample
@@ -1320,15 +1478,15 @@ def significant_sample_size(N, **kwargs):
     .. math ::
         x = Z^2 \\times p(1-p)
 
+    .. math ::
         n = \\tfrac{(N \\times x)}{((N-1) \\times E^2 + x)}
 
+    .. math ::
         E^2 = \\tfrac{(N - n) \\times x}{n(N-1)}
 
     Note that on the website: :math:`Z(c)^2`, where :math:`Z` is
     a function of :math:`c`.
 
-    Misc:
-    -----
     Typical Z-scrore / confidence interval values are:
 
     - Z = 1.6448536269514722 -> 90%
@@ -1351,6 +1509,11 @@ def significant_sample_size(N, **kwargs):
     >>> # a 1% change in margin of error means a 27% change in sample size:
     >>> significant_sample_size(1000, CI=0.95, E=0.03)  # 1% change in error
     516
+
+
+    .. seealso::
+
+       :func:`significant_subsample`
     """
     # Error if both the Confidence Interval and the Z-score are given
     if "CI" in kwargs and "Z" in kwargs:
@@ -1365,7 +1528,7 @@ def significant_sample_size(N, **kwargs):
 
     return int(N * Z**2 * p*(1-p) / ((N - 1) * E**2 + (Z**2 * p*(1-p))))
 
-@decorators.Deprecated
+@decorators.Obsolete
 def significant_sample_size_ci(N, CI=0.95, E=0.02, p=0.5):
     """
     Same as significant_sample_size, but allows the user to enter in a

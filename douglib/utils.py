@@ -2,14 +2,14 @@
 # Disable the 'Instance/Module has no ___ member' error for pylint
 # pylint: disable=E1101
 """
-@name:          utils.py
-@vers:          0.2.0
-@author:        dthor
-@created:       Thu Jul 10 09:51:32 2014
-@descr:         Contains non-math-related utilities used by douglib such as
-                decorators, colored terminal printing, code timing and
-                progress bars.
+douglib.utils
+=============
 
+Created on Thu 2014-07-10 at 09:51:32 PDT
+
+Contains non-math-related utilities used by douglib such as
+decorators, colored terminal printing, code timing and
+progress bars.
 """
 # ---------------------------------------------------------------------------
 ### Imports
@@ -395,8 +395,6 @@ def progress_bar(count, size, bar_size=10):
     """
     A simple terminal progress bar.
 
-    Usage
-    -----
     Insert into the loop that you want to monitor progrss on and once after
     the loop is completed (with count = size)
 
@@ -478,8 +476,8 @@ def print_section(text, style=3):
     Prints out a line in varoius section header styles. Automatically
     prepends newline char(s) to text for sections and major sections
 
-    style codes
-    -----------
+    Notes
+    -----
     0:
         subsubsection, denoted by ``--- subsubsection ---`` in magenta.
     1:

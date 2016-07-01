@@ -2,14 +2,14 @@
 # Disable the 'Instance/Module has no ___ member' error for pylint
 # pylint: disable=E1101
 """
-@name:          utils.py
-@vers:          0.2.0
-@author:        dthor
-@created:       Thu Jul 10 09:51:32 2014
-@descr:         Contains non-math-related utilities used by douglib such as
-                decorators, colored terminal printing, code timing and
-                progress bars.
+douglib.utils
+=============
 
+Created on Thu 2014-07-10 at 09:51:32 PDT
+
+Contains non-math-related utilities used by douglib such as
+decorators, colored terminal printing, code timing and
+progress bars.
 """
 # ---------------------------------------------------------------------------
 ### Imports
@@ -73,62 +73,53 @@ class CodeTimer(object):
     Stop times are printed in Red, while lap times are printed in Cyan. Time
     differences, as provided by the ``delta()`` method, are printed in Yellow.
 
-    Parameters:
-    -------
+    Parameters
+    ----------
     label : string
         An optional label for the timer. Will be displayed upon stopping or
         lapping the timer.
 
-    Public Attributes:
-    ------------------
+    Attributes
+    ----------
     label : string
         The label for the timer instance.
-
     running : bool
         Returns ``True`` if the timer is currently running.
-
     start_t : datetime.datetime object
         The time, in seconds, that the timer was last started, as reported
         by the built-in time.clock() function. Returns ``None`` if the
         timer has never been started.
-
     stop_t : datetime.datetime object
         The time, in seconds, that the timer was last stopped, as reported
         by the built-in time.clock() function. Returns ``None`` if the
         timer has never been stopped.
-
     diff : float
         The time between the the last lap or stop event and the start event.
         Returns ``None`` if the timer has never been lapped or stopped.
-
     prev_t : datetime.datetime object
         The timestamp of the previous lap, start, or delta event. Returns
         ``None`` if the timer has never been started.
 
-    Public Methods:
-    ---------------
-    start(self) :
+    Methods
+    -------
+    start(self)
         Start the timer.
-
-    stop(self, override_label=None) :
+    stop(self, override_label=None)
         Stops the timer and prints out the elapsed time, optionally
         overriding the label temporarily. Returns the elapsed time as a
         datetime.timedelta object.
-
-    reset(self) :
+    reset(self)
         Resets the timer and clears the last start_t, stop_t, and diff values.
-
-    lap(self, override_label=None) :
+    lap(self, override_label=None)
         Prints out the current elapsed time, optionally overrideing the
         label temporarily. Returns the elapsed time as a
         datetime.timedelta object.
-
-    delta(self, override_label=None) :
+    delta(self, override_label=None)
         Prints out the time delta between this call and the previous call
         of ``delta``, ``lap``, or ``start``. Returns the value as a
         datetime.timedelta object.
 
-    Examples:
+    Examples
     --------
     Basic Usage:
 
@@ -269,8 +260,8 @@ class Borg(object):
     Any change to a single instance will also change the data in other
     instances.
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> a = Borg()
     >>> b = Borg()
     >>> repr(a)             # doctest: +ELLIPSIS
@@ -306,8 +297,8 @@ class Singleton(object):
     (identity) will be used. With Borg, multiple identities are allowed, but
     each identity has the same state.
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> a = Singleton()
     >>> b = Singleton()
     >>> repr(a)             # doctest: +ELLIPSIS
@@ -343,18 +334,18 @@ def hexvers_to_str(hexvers=None):
 
     If hexvers is not defined, then it imports sys.hexversion and runs that.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     hexvers : int, optional
         The integer representation of a hex-encoded version number. Defaults
         to None, which pulls the current python version.
 
-    Returns:
-    --------
+    Returns
+    -------
     The version number representated as a string
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> hexvers_to_str()            # doctest: +SKIP
     a
     >>> hexvers_to_str(34014960)
@@ -404,13 +395,11 @@ def progress_bar(count, size, bar_size=10):
     """
     A simple terminal progress bar.
 
-    Usage:
-    ------
     Insert into the loop that you want to monitor progrss on and once after
     the loop is completed (with count = size)
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     count : int
         ieration that you want to display.
     size : int
@@ -418,16 +407,16 @@ def progress_bar(count, size, bar_size=10):
     barLen : int
         Length of the progress bar.
 
-    Notes:
-    ------
+    Notes
+    -----
     1.  If count = length, then the bar display will be persistant
     2.  I'd like for it to only update if percent_complete changes, but
         I'm not quite sure how to do that yet.
     3.  Does not like to work properly in Spyder. This is because the Spyder
         terminal doesn't recognize the ``\\r`` special character.
 
-    Example:
-    --------
+    Example
+    -------
 
     ::
 
@@ -467,8 +456,8 @@ def unjoin_path(path):
 
     *Note the "splat" (list unpacking) operator (asterisk)*
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> path = "C:\path1\path2\hello.txt"
     >>> my_split_path = unjoin_path(path)
     >>> my_split_path
@@ -487,8 +476,8 @@ def print_section(text, style=3):
     Prints out a line in varoius section header styles. Automatically
     prepends newline char(s) to text for sections and major sections
 
-    style codes:
-    ------------
+    Notes
+    -----
     0:
         subsubsection, denoted by ``--- subsubsection ---`` in magenta.
     1:
@@ -553,8 +542,8 @@ def try_again(funcs, args, kwargs, errors, raise_error=None):
     Trys multiple functions, arguements, or exceptions until one succeeds.
     Returns the value of the succeeding function.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     funcs : list of functions
         List of functions to try, in order.
 
@@ -572,17 +561,17 @@ def try_again(funcs, args, kwargs, errors, raise_error=None):
         The exception to raise if no attempt passes. If None, then raises
         the most recent exception as RuntimeError
 
-    Returns:
-    --------
+    Returns
+    -------
     retval
         The result of whichever function succeeded.
 
-    Notes:
-    ------
+    Notes
+    -----
     `funcs`, `args`, `kwargs`, and `errors` must all have the same length.
 
-    Examples:
-    ---------
+    Examples
+    --------
     >>> def my_func(a):
     ...     if a == 3:
     ...         return a

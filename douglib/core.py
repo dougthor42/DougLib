@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=C0103
 """
-Created on Mon Aug 26 11:02:21 2013
+Created on Mon Aug 26 11:02:21 2013.
 
 A library holding common subroutines and classes that I've created.
 """
@@ -99,7 +99,7 @@ def reservoir_sampling(array, num):
 
 def round_to_multiple(x, y):
     """
-    Rounds ``x`` to a multiple of ``y``.
+    Round ``x`` to a multiple of ``y``.
 
     Parameters
     ----------
@@ -130,7 +130,7 @@ def round_to_multiple(x, y):
 
 def sort_by_column(big_list, *args, **kwargs):
     """
-    Sorts an 2D list by columns defined by ``args``.
+    Sort a 2D list by columns defined by ``args``.
 
     Will sort by multiple columns if ``args`` is longer than 1 element.
 
@@ -198,7 +198,7 @@ def sort_by_column(big_list, *args, **kwargs):
 
 def clip(x, min_max, clipval=None):
     """
-    Clips the value x to x_min or x_max.
+    Clip the value ``x`` to x_min or x_max.
 
     If ``clipval`` is defined, then returns those values instead.
     ``clipval`` must be a list or tuple of length 2.
@@ -246,7 +246,7 @@ def clip(x, min_max, clipval=None):
 
 def rescale(x, orig_scale, new_scale=(0, 1)):
     """
-    Rescales x to run over a new range.
+    Rescale x to run over a new range.
 
     Rescales x (which was part of scale ``original_min`` to ``original_max``)
     to run over a range (``new_min`` to ``new_max``) such
@@ -294,9 +294,10 @@ def rescale(x, orig_scale, new_scale=(0, 1)):
 
 def rescale_clip(x, orig_scale, new_scale=(0, 1)):
     """
-    Same as :func:`rescale`, but also clips the new data. Any result that is
-    below ``new_min`` or above ``new_max`` is return as ``new_min`` or
-    ``new_max``, respectively
+    Same as :func:`rescale`, but also clips the new data.
+
+    Any result that is below ``new_min`` or above ``new_max`` is return
+    as ``new_min`` or ``new_max``, respectively
 
     Parameters
     ----------
@@ -396,8 +397,9 @@ def nearest_indicies(data, x):
 
 def position(array, item):
     """
-    Emulates Mathematica's ``Position[]`` function as best as possible,
-    but for 1D arrays only.
+    Emulate Mathematica's ``Position[]`` function as best as possible.
+
+    Only works on 1D arrays.
 
     Parameters
     ----------
@@ -430,7 +432,7 @@ def position(array, item):
 
 def threshold_1d_array(array, y):
     """
-    Emulates LabVIEW's ``Threshold 1D Array`` function.
+    Emulate LabVIEW's ``Threshold 1D Array`` function.
 
     Takes a ``Y`` value and returns a fractional index for that ``Y`` value.
     If the function is not monotomically increasing, it returns the
@@ -470,8 +472,10 @@ def threshold_1d_array(array, y):
 
 def interpolate_1d_array(array, x):
     """
-    Emulates LabVIEW's ``Interpolate 1D Array`` function. Takes a fractional
-    index value ``x`` and returns an interpolated ``Y`` value.
+    Emulate LabVIEW's ``Interpolate 1D Array`` function.
+
+    Takes a fractional index value ``x`` and returns an interpolated
+    ``Y`` value.
 
     Parameters
     ----------
@@ -538,8 +542,7 @@ def pick_x_at_y(xy_array, y):
 @decorators.Obsolete
 def nanpercentile(a, percentile):
     """
-    Performs a numpy.percentile(a, percentile) calculation while
-    ignoring NaN values.
+    Perform numpy.percentile(a, percentile) while ignoring NaN values.
 
     Parameters
     ----------
@@ -563,8 +566,9 @@ def nanpercentile(a, percentile):
 
 def max_dist(center, size):
     """
-    Calculates the distance from the orgin ``(0, 0)`` to the
-    farthest corner of a rectangle.
+    Calculate the distance to the farthest corner of a rectangle.
+
+    Assumes that the orgin is at ``(0, 0)``.
 
     If the rectangle's center is in Q1, then the upper-right corner is
     the farthest away from the origin. If in Q2, then the upper-left corner
@@ -600,8 +604,9 @@ def max_dist(center, size):
 
 def max_dist_sqrd(center, size):
     """
-    Calculates the squared distance from the orgin ``(0, 0)`` to the
-    farthest corner of a rectangle.
+    Calculate the squared distance to the farthest corner of a rectangle.
+
+    Assumes that the orgin is at ``(0, 0)``.
 
     **Does not take the square of the distance for the sake of speed.**
 
@@ -645,7 +650,7 @@ def max_dist_sqrd(center, size):
 
 def rc_to_radius(rc_coord, die_xy, center_rc):
     """
-    Converts a die RC coordinate to a radius.
+    Convert a die RC coordinate to a radius.
 
     Parameters
     ----------
@@ -664,6 +669,7 @@ def rc_to_radius(rc_coord, die_xy, center_rc):
 
 
     .. seealso::
+
        :func:`rc_to_radius_sqrd`
     """
     return math.sqrt(rc_to_radius_sqrd(rc_coord, die_xy, center_rc))
@@ -671,7 +677,7 @@ def rc_to_radius(rc_coord, die_xy, center_rc):
 
 def rc_to_radius_sqrd(rc_coord, die_xy, center_rc):
     """
-    Converts a die RC coordinate to a radius.
+    Convert a die RC coordinate to a radius.
 
     Returns the squared radius for the sake of speed.
 
@@ -692,6 +698,7 @@ def rc_to_radius_sqrd(rc_coord, die_xy, center_rc):
 
 
     .. seealso::
+
        :func:`rc_to_radius`
     """
     x_dist = (die_xy[0] * (rc_coord[1] - center_rc[1]))**2
@@ -751,10 +758,13 @@ def frange(start, stop, step):
 @decorators.Deprecated
 def unit_prefix_str_to_num(string):
     """
-    Deprecated by from_engineering_notation
+    Convert a number string with unit prefix to a floating point number.
 
-    Converts a number string with unit prefix to a floating point number.
     For example, "1.23m" becomes 0.00123 and "4.5k" becomes 4500.0
+
+    .. warning::
+
+       Deprecated by :func:`from_engineering_notation`
     """
     prefixes = {"y": 1e-24,
                 "z": 1e-21,
@@ -788,8 +798,7 @@ def unit_prefix_str_to_num(string):
 
 def from_engineering_notation(string):
     """
-    Converts a number string with order-of-magnitude sufffix to a
-    floating point number.
+    Convert a number string with order-of-magnitude suffix to a float.
 
     Parameters
     ----------
@@ -850,12 +859,18 @@ def from_engineering_notation(string):
 @decorators.Deprecated
 def num_to_unit_prefix_str(number, num_dec=5):
     """
-    Deprecated by to_engineering_notation
+    Convert a number to a string with a unit prefix appended.
 
-    Converts a number to a string with a unit prefix appended.
-    Always uses smaller of two options.
-    number_to_unit_prefix_string(123456) = "123.456k"
-    number_to_unit_prefix_string(1000036, 2) = "1.000036M"
+    Always uses smaller of two options:
+
+    >>> number_to_unit_prefix_string(123456)
+    "123.456k"
+    >>> number_to_unit_prefix_string(1000036, 2)
+    "1.000036M"
+
+    .. warning::
+
+       Deprecated by :func:`to_engineering_notation`
     """
     prefixes = {-24: "y",
                 -21: "z",
@@ -899,8 +914,7 @@ def num_to_unit_prefix_str(number, num_dec=5):
 
 def to_engineering_notation(number, num_digits=5):
     """
-    Converts a floating point number to string with an SI order-of-magnitude
-    suffix.
+    Convert a float to string with an SI order-of-magnitude suffix.
 
     .. caution::
 
@@ -993,6 +1007,7 @@ def to_engineering_notation(number, num_digits=5):
 def cei_ink_map(probe_list, bad_xy):
     """
     Generate a txt file that is readable by CEI for pick-and-place.
+
     Currently only uses a single bin. Plans to add more bins are coming.
     bad_xy is a list of tuples. For now.
     """
@@ -1070,7 +1085,7 @@ def cei_ink_map(probe_list, bad_xy):
 
 def rcd_to_2d_array(data, missing=0):
     """
-    Converts array of tuples to 2D array (matrix-like).
+    Convert an array of tuples to a 2D array (matrix-like).
 
     Takes an array of tuples of (Row (y), column (x), data) and converts
     it to a 2D array where the element index is the row and column value.
@@ -1098,6 +1113,7 @@ def rcd_to_2d_array(data, missing=0):
     [['a', 'b', 'c'], ['d', 'e', 'f'], ['g', 'X', 'i']]
 
     .. warning::
+
         ``data`` must be sorted by Row (y) then by Column (x) values.
     """
     #sort_by_column(data, 1)
@@ -1122,7 +1138,7 @@ def rcd_to_2d_array(data, missing=0):
 
 def xyd_to_2d_array(data, missing=0):
     """
-    Converts array of tuples to 2D array (matrix-like).
+    Convert an array of tuples to a 2D array (matrix-like).
 
     Takes an array of ``(x, y, data)`` tuples and converts
     it to a 2D array where the element index is the Y and X value.
@@ -1171,8 +1187,7 @@ def xyd_to_2d_array(data, missing=0):
 
 def convert_rcd_xyd(rcd):
     """
-    Converts a list of ``(row, column, data)`` to ``(x, y, data)`` or
-    vise-versa.
+    Convert a list of ``(a, b, data)`` to ``(b, a, data)``.
 
     Simply swaps the first two items in each sublist. Also sorts the new
     list by ``x`` then ``y``.
@@ -1192,7 +1207,7 @@ def convert_rcd_xyd(rcd):
 
 def array_2d_to_str(array_2d):
     """
-    Converts a 2D array to a spreadsheet string.
+    Convert a 2D array to a spreadsheet string.
 
     Parameters
     ----------
@@ -1212,7 +1227,7 @@ def array_2d_to_str(array_2d):
 
 def reedholm_die_to_rc(die_name):
     """
-    Converts the Reedholm die name ("x27y54") to row-column tuple
+    Convert the Reedholm die name ("x27y54") to a row-column tuple.
 
     Parameters
     ----------
@@ -1240,7 +1255,7 @@ def reedholm_die_to_rc(die_name):
 #@decorators.Timed
 def binary_file_compare(file1, file2):
     """
-    Compares two files byte-by-byte.
+    Compare two files byte-by-byte.
 
     Parameters
     ----------
@@ -1334,7 +1349,7 @@ def binary_file_compare(file1, file2):
 
 def hash_file(file_object, hasher, blocksize=65536):
     """
-    Hashes a file using a given hashing type.
+    Hash a file using a given hashing type.
 
     Parameters
     ----------
@@ -1369,8 +1384,9 @@ def hash_file(file_object, hasher, blocksize=65536):
 
 def significant_subsample(array, CI=0.95, E=0.02, p=0.5):
     """
-    Returns a subarray that is a statictically significant sampling
-    of the entire array (assuming the original array is the entire population).
+    Return a subarray that is a statictically significant sampling.
+
+    Assumes the original array is the entire population.
 
     See docstring for the significant_sample_size function for more
     information.
@@ -1411,10 +1427,13 @@ def significant_subsample(array, CI=0.95, E=0.02, p=0.5):
 
 
 def significant_sample_size(N, **kwargs):
-    """
-    Returns the sample size needed to provide a given z-score (or confidence
-    interval) and margin of error from a population of size ``N`` and response
-    distribution ``p``. Assumes a normal distribution.
+    r"""
+    Return the significant sample size.
+
+    The significant sample size is the sample size needed to provide a given
+    z-score. (or confidence interval) and margin of error from a population
+    of size ``N`` and response distribution ``p``. Assumes a normal
+    distribution.
 
     Parameters
     ----------
@@ -1463,8 +1482,8 @@ def significant_sample_size(N, **kwargs):
     by:
 
     .. math ::
-        n = \\frac{N \\times Z^2 \\times p(1-p)}
-                  {(N-1) E^2 +(Z^2 \\times p(1-p))}
+        n = \frac{N \times Z^2 \times p(1-p)}
+                 {(N-1) E^2 +(Z^2 \times p(1-p))}
 
     - n = sample size
     - N = population size
@@ -1476,13 +1495,13 @@ def significant_sample_size(N, **kwargs):
     following equations:
 
     .. math ::
-        x = Z^2 \\times p(1-p)
+        x = Z^2 \times p(1-p)
 
     .. math ::
-        n = \\tfrac{(N \\times x)}{((N-1) \\times E^2 + x)}
+        n = \frac{(N \times x)}{((N-1) \times E^2 + x)}
 
     .. math ::
-        E^2 = \\tfrac{(N - n) \\times x}{n(N-1)}
+        E^2 = \frac{(N - n) \times x}{n(N-1)}
 
     Note that on the website: :math:`Z(c)^2`, where :math:`Z` is
     a function of :math:`c`.
@@ -1531,8 +1550,10 @@ def significant_sample_size(N, **kwargs):
 @decorators.Obsolete
 def significant_sample_size_ci(N, CI=0.95, E=0.02, p=0.5):
     """
-    Same as significant_sample_size, but allows the user to enter in a
-    confidence interval directly, rather than using the Z-score.
+    Same as significant_sample_size.
+
+    Allows the user to enter in a confidence interval directly rather than
+    using the Z-score.
 
     See docstring for the significant_sample_size function for more
     information.

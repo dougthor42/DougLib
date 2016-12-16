@@ -12,5 +12,8 @@ created over the years.
 __version__ = "1.0.10"
 __project_url__ = "http://gitlab.tph.local/dthor/douglib"
 __project_name__ = "douglib"
+__package_name__ = "douglib"
 __description__ = "Random collection of functions and utilities."
 __long_descr__ = __doc__
+__released__ = "at some point"
+__created__ = "long ago..."

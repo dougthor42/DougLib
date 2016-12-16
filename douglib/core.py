@@ -497,7 +497,7 @@ def interpolate_1d_array(array, x):
 
        :func:`threshold_1d_array`
 
-    .. note:
+    .. note::
        Timing: O(1)
     """
     i = int(math.floor(x))
@@ -1481,7 +1481,7 @@ def significant_sample_size(N, **kwargs):
     The sample size for the statistically significant random sample is given
     by:
 
-    .. math ::
+    .. math::
         n = \frac{N \times Z^2 \times p(1-p)}
                  {(N-1) E^2 +(Z^2 \times p(1-p))}
 

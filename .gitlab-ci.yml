@@ -1,12 +1,14 @@
 stages:
   - init
   - test
-  - tag_deploy
+  - build
+  - deploy
   - cleanup
 
 variables:
   VENV_ROOT: C:\temp\builds
   VENV_PY34: C:\temp\builds\python34_x64
+  PYPI_URL: http://tphweb.tph.local/pypi
 
 # Set environment vars
 before_script:
@@ -54,8 +56,8 @@ tests:
     - green -vvv -s 1 -W -t douglib
     - nose2 douglib
 
-tag_bundle:
-  stage: tag_deploy
+build:
+  stage: build
   when: on_success
   tags:
     - python
@@ -68,6 +70,26 @@ tag_bundle:
   artifacts:
     paths:
       - dist/*.whl
+
+deploy:
+  stage: deploy
+  environment:
+    name: production
+    url: $PYPI_URL/simple/douglib
+  when: on_success
+  tags:
+    - python
+  only:
+    - tags
+  script:
+    - call %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
+    - python -m pip install --upgrade twine
+    - dir dist\*.zip /b/s > temp.txt
+    # Read that path into an environment variable.
+    - set /p VAR=<temp.txt
+    - echo %VAR%
+    - twine register --repository %PYPI_URL% --repository-url %PYPI_URL% -u '' -p '' %VAR%
+    - twine upload --repository %PYPI_URL% --repository-url %PYPI_URL% -u '' -p '' dist/*
 
 clean_up:
   stage: cleanup

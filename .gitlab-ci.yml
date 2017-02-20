@@ -69,7 +69,7 @@ build:
     - python setup.py sdist bdist_wheel
   artifacts:
     paths:
-      - dist/*.whl
+      - dist/*
 
 deploy:
   stage: deploy

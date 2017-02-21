@@ -12,46 +12,47 @@ variables:
 
 # Set environment vars
 before_script:
-  - REM ==================== Before Script ====================
-  - echo %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%
+  # Create the build dir environment variable.
+  - set BUILD_DIR=%VENV_PY34%\%CI_PROJECT_ID%
+  - set BUILD_DIR=%BUILD_DIR%__%CI_PROJECT_NAMESPACE%
+  - set BUILD_DIR=%BUILD_DIR%__%CI_PROJECT_NAME%
+  - set BUILD_DIR=%BUILD_DIR%__%CI_PIPELINE_ID%
+  - set BUILD_DIR=%BUILD_DIR%__%CI_BUILD_REF_NAME%
+  - echo %BUILD_DIR%
+
   - call C:\WinPython34\scripts\env.bat
   - python -c "import sys;print(sys.version)"
   - REM ~~~~~~~~~~~~~~~~~~~~ End Before Script ~~~~~~~~~~~~~~~~~~~~
 
-pip_install:
+install:
   stage: init
   when: always
   tags:
     - python
   script:
-    - REM ==================== pip_install ====================
-    # Clear pip cache because it sometimes causes issues.
-    - rd /S /Q C:\Users\tph-buildbot\AppData\Local\pip\Cache
-
-    - python -m venv --clear %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%
-    - call %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
+    - python -m venv --clear %BUILD_DIR%
+    - call %BUILD_DIR%\Scripts\activate.bat
     # Can't upgrade pip in place.
     # See https://github.com/pypa/pip/issues/1299#issuecomment-188198496
-    - python -m pip install --upgrade pip==8.1.0 --no-cache-dir
+    - python -m pip install --upgrade --no-cache-dir pip setuptools wheel
 
     # Scipy doesn't have a wheel on PyPI, so I need to install it
     # from a downloaded wheel. Also means I can't use `pip install -r
     # requirements.txt` to install any other items :-(
 #    - pip install -r requirements.txt --no-cache-dir
-    - pip install https://gitlab.com/dougthor42/wheels/raw/master/numpy-1.11.0+mkl-cp34-cp34m-win_amd64.whl --no-cache-dir
-    - pip install .\build_reqs\scipy-0.17.0-cp34-none-win_amd64.whl
-    - pip install matplotlib --no-cache-dir
-    - pip install colorama --no-cache-dir
-    - pip install -r dev-requirements.txt --no-cache-dir
+    - python -m pip install numpy
+    - python -m pip install .\build_reqs\scipy-0.17.0-cp34-none-win_amd64.whl
+    - python -m pip install matplotlib --no-cache-dir
+    - python -m pip install colorama --no-cache-dir
+    - python -m pip install -r dev-requirements.txt --no-cache-dir
 
-tests:
+test:
   stage: test
   when: on_success
   tags:
     - python
   script:
-    - REM ==================== tests ====================
-    - call %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
+    - call %BUILD_DIR%\Scripts\activate.bat
     - pip install nose2 --no-cache-dir
     - green -vvv -s 1 -W -t douglib
     - nose2 douglib
@@ -64,8 +65,7 @@ build:
   only:
     - tags
   script:
-    - REM ==================== tag_bundle ====================
-    - call %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
+    - call %BUILD_DIR%\Scripts\activate.bat
     - python setup.py sdist bdist_wheel
   artifacts:
     paths:
@@ -82,7 +82,7 @@ deploy:
   only:
     - tags
   script:
-    - call %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%\Scripts\activate.bat
+    - call %BUILD_DIR%\Scripts\activate.bat
     - python -m pip install --upgrade twine
     - dir dist\*.zip /b/s > temp.txt
     # Read that path into an environment variable.
@@ -98,4 +98,4 @@ clean_up:
     - python
   script:
     - REM ==================== clean_up ====================
-    - rd /S /Q %VENV_PY34%\%CI_PROJECT_ID%__%CI_BUILD_REF_NAME%
+    - rd /S /Q %BUILD_DIR%

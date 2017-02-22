@@ -57,7 +57,8 @@ build:
     - tags
   script:
     - call %BUILD_DIR%\Scripts\activate.bat
-    - python setup.py sdist bdist_wheel
+    - python setup.py sdist --formats=gztar,zip
+    - python setup.py bdist_wheel
   artifacts:
     paths:
       - dist/*

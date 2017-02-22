@@ -9,7 +9,7 @@ created over the years.
 """
 
 ### Constants ###############################################################
-__version__ = "1.0.13"
+__version__ = "1.0.14"
 __project_url__ = "http://gitlab.tph.local/dthor/douglib"
 __project_name__ = "douglib"
 __package_name__ = "douglib"

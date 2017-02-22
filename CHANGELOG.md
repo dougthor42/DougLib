@@ -1,6 +1,10 @@
 # Changelog for DougLib
 
 
+## 1.0.14 (2017-02-22)
++ Fix GitLab CI
+
+
 ## 1.0.13 (2017-02-22)
 + At some point in the past, I ported to Py3
 + added missing `max_dist_sqrd` function

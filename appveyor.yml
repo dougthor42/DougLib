@@ -7,12 +7,9 @@ environment:
     WXPYTHON_SNAPSHOTS: "https://wxpython.org/Phoenix/snapshot-builds"
 
   matrix:
-#    - PYTHON: "C:\\Python27"
-#    - PYTHON: "C:\\Python27-x64"
-    - PYTHON: "C:\\Python34-x64"
-#    - PYTHON: "C:\\Python35"
-#    - PYTHON: "C:\\Python35-x64"
-#    - PYTHON: "C:\\Python36-x64"
+    - PYTHON: "C:\\Python35"
+    - PYTHON: "C:\\Python35-x64"
+    - PYTHON: "C:\\Python36-x64"
 
 install:
   # Check that we have the expected version and architecture for Python
@@ -20,14 +17,7 @@ install:
   - "%PYTHON%\\python.exe -m pip install --upgrade pip"
 
   # install dependencies
-  # Scipy doesn't have a wheel on PyPI, so I need to install it
-  # from a downloaded wheel. Also means I can't use `pip install -r
-  # requirements.txt` to install any other items :-(
-#  - pip install -r requirements.txt --no-cache-dir
-  - "%PYTHON%\\python.exe -m pip install numpy"
-  - "%PYTHON%\\python.exe -m pip install ./build_reqs/scipy-0.17.0-cp34-none-win_amd64.whl"
-  - "%PYTHON%\\python.exe -m pip install matplotlib"
-  - "%PYTHON%\\python.exe -m pip install colorama"
+  - "%PYTHON%\\python.exe -m pip install -r requirements.txt"
   - "%PYTHON%\\python.exe -m pip install -r dev-requirements.txt"
 
 build: false  # Not a C# project, build stuff at the test step instead.
@@ -35,11 +25,11 @@ build: false  # Not a C# project, build stuff at the test step instead.
 test_script:
   # Build the compiled extension and run the project tests
   #- "%CMD_IN_ENV% nosetests"
-  - "%PYTHON%\\python.exe green douglib -vvv -s 1"
+  - "%PYTHON%\\python.exe -m green douglib -vvv -t -s 1"
 
 after_test:
 #  # if tests OK, create whl package
-  - "%PYTHON%\\python.exe python setup.py bdist_wheel"
+  - "%PYTHON%\\python.exe setup.py bdist_wheel"
   - ps: "ls dist"
 
 artifacts:

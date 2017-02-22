@@ -7,20 +7,20 @@ stages:
 
 variables:
   VENV_ROOT: C:\temp\builds
-  VENV_PY34: C:\temp\builds\python34_x64
+  VENV_PY35: C:\temp\builds\python35_x64
   PYPI_URL: http://tphweb.tph.local/pypi
 
 # Set environment vars
 before_script:
   # Create the build dir environment variable.
-  - set BUILD_DIR=%VENV_PY34%\%CI_PROJECT_ID%
+  - set BUILD_DIR=%VENV_PY35%\%CI_PROJECT_ID%
   - set BUILD_DIR=%BUILD_DIR%__%CI_PROJECT_NAMESPACE%
   - set BUILD_DIR=%BUILD_DIR%__%CI_PROJECT_NAME%
   - set BUILD_DIR=%BUILD_DIR%__%CI_PIPELINE_ID%
   - set BUILD_DIR=%BUILD_DIR%__%CI_BUILD_REF_NAME%
   - echo %BUILD_DIR%
 
-  - call C:\WinPython34\scripts\env.bat
+  - call C:\WinPython35\scripts\env.bat
   - python -c "import sys;print(sys.version)"
   - REM ~~~~~~~~~~~~~~~~~~~~ End Before Script ~~~~~~~~~~~~~~~~~~~~
 
@@ -36,14 +36,7 @@ install:
     # See https://github.com/pypa/pip/issues/1299#issuecomment-188198496
     - python -m pip install --upgrade --no-cache-dir pip setuptools wheel
 
-    # Scipy doesn't have a wheel on PyPI, so I need to install it
-    # from a downloaded wheel. Also means I can't use `pip install -r
-    # requirements.txt` to install any other items :-(
-#    - pip install -r requirements.txt --no-cache-dir
-    - python -m pip install numpy
-    - python -m pip install .\build_reqs\scipy-0.17.0-cp34-none-win_amd64.whl
-    - python -m pip install matplotlib --no-cache-dir
-    - python -m pip install colorama --no-cache-dir
+    - pip install -r requirements.txt --no-cache-dir
     - python -m pip install -r dev-requirements.txt --no-cache-dir
 
 test:
@@ -53,9 +46,7 @@ test:
     - python
   script:
     - call %BUILD_DIR%\Scripts\activate.bat
-    - pip install nose2 --no-cache-dir
     - green -vvv -s 1 -W -t douglib
-    - nose2 douglib
 
 build:
   stage: build

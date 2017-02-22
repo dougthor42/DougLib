@@ -2,6 +2,7 @@ stages:
   - init
   - test
   - build
+  - docs
   - deploy
   - cleanup
 
@@ -57,10 +58,28 @@ build:
     - tags
   script:
     - call %BUILD_DIR%\Scripts\activate.bat
-    - python setup.py sdist bdist_wheel
+    - python setup.py sdist --formats=gztar,zip
+    - python setup.py bdist_wheel
   artifacts:
     paths:
       - dist/*
+
+docs:
+  stage: docs
+  when: on_success
+  tags:
+    - python
+  only:
+    - tags
+  script:
+    - call %BUILD_DIR%\Scripts\activate.bat
+
+    - python -m pip install -i %PYPI_URL% --trusted-host tphweb.tph.local MarkupSafe
+    - python -m pip install sphinx sphinx_rtd_theme
+
+    - cd docs
+    - python upload_docs.py
+    - cd ..
 
 deploy:
   stage: deploy

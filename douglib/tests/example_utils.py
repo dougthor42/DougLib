@@ -24,34 +24,8 @@ import numpy as np
 from docopt import docopt
 
 # Package / Application
-try:
-    # Imports used by unit test runners
-    from . import utils
-    from . import decorators
-#    from . import (__project_name__,
-#                   __version__,
-#                   __released__,
-#                   )
-#    logging.debug("Imports for UnitTests")
-except SystemError:
-    try:
-        # Imports used by Spyder
-        import utils
-        import decorators
-#        from __init__ import (__project_name__,
-#                              __version__,
-#                              __released__,
-#                              )
-#        logging.debug("Imports for Spyder IDE")
-    except ImportError:
-         # Imports used by cx_freeze
-        from douglib import utils
-        from douglib import decorators
-#        from douglib import (__project_name__,
-#                             __version__,
-#                             __released__,
-#        logging.debug("imports for Executable")
-
+from .. import utils
+from .. import decorators
 
 
 __author__ = "Douglas Thor"

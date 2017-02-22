@@ -740,8 +740,3 @@ def main():
     funcs = [make_trouble] * 5
     a = try_again(funcs, args, [None] * 5, errors)
     print(a)
-
-
-if __name__ == "__main__":
-    main()
-#    print("Module is not meant to be run as a script")

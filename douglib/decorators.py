@@ -61,30 +61,7 @@ import inspect
 # Third-Party
 
 # Package / Application
-try:
-    # Imports used by unit test runners
-    from . import utils
-#    from . import (__project_name__,
-#                   __version__,
-#                   __released__,
-#                   )
-#    logging.debug("Imports for UnitTests")
-except SystemError:
-    try:
-        # Imports used by Spyder
-        import utils
-#        from __init__ import (__project_name__,
-#                              __version__,
-#                              __released__,
-#                              )
-#        logging.debug("Imports for Spyder IDE")
-    except ImportError:
-         # Imports used by cx_freeze
-        from douglib import utils
-#        from douglib import (__project_name__,
-#                             __version__,
-#                             __released__,
-#        logging.debug("imports for Executable")
+from . import utils
 
 
 def debug(func=None, *, prefix=''):
@@ -553,14 +530,3 @@ class Skipped(Decorator):
 
     def __str__(self):
         return "Skipped"
-
-
-@debug(prefix="***")
-def main():
-    """Main Function.
-    """
-    pass
-
-if __name__ == "__main__":
-    main()
-    print(main.__doc__)

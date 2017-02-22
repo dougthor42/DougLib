@@ -11,40 +11,13 @@ Created on Tue June 06 08:44:12 2014
 ### Imports
 # ---------------------------------------------------------------------------
 # Standard Library
-import abc
-import functools
-import collections
-import inspect
+
 
 # Third-Party
 import matplotlib.pyplot as pyplot
 
 # Package / Application
-try:
-    # Imports used by unit test runners
-    from .core import rc_to_radius
-#    from . import (__project_name__,
-#                   __version__,
-#                   __released__,
-#                   )
-#    logging.debug("Imports for UnitTests")
-except SystemError:
-    try:
-        # Imports used by Spyder
-#        import utils
-        from core import rc_to_radius
-#        from __init__ import (__project_name__,
-#                              __version__,
-#                              __released__,
-#                              )
-#        logging.debug("Imports for Spyder IDE")
-    except ImportError:
-         # Imports used by cx_freeze
-        from douglib.core import rc_to_radius
-#        from douglib import (__project_name__,
-#                             __version__,
-#                             __released__,
-#        logging.debug("imports for Executable")
+from .core import rc_to_radius
 
 
 def radius_plot(rcd_list, die_xy, center_rc):

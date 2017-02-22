@@ -21,7 +21,6 @@ import unittest
 
 # Third-Party
 import numpy as np
-import scipy.stats as scipystats
 from docopt import docopt
 
 # Package / Application

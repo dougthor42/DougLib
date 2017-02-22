@@ -17,7 +17,7 @@ import hashlib
 
 # Third-Party
 import numpy as np
-import scipy.stats as scipystats
+from pyerf.pyerf import erf, erfinv
 
 # Package / Application
 try:
@@ -1426,6 +1426,160 @@ def significant_subsample(array, CI=0.95, E=0.02, p=0.5):
     return reservoir_sampling(array, n)
 
 
+def _integrate(f, a, b, N=200):
+    """
+    Integrate function ``f`` from ``a`` to ``b`` using ``N`` itertions.
+
+    Parameters
+    ----------
+    f : function
+        The function to integrate. Must take a single numeric argument (or
+        more if args 2 through n are optional).
+    a : float
+    b : float
+        The limits of the integral
+    N : int, optional
+        The number of samples to use. Higher numbers yield more accurate
+        values but cost more processing power and memory.
+
+    Returns
+    -------
+    area : float
+        The area under the function.
+
+    See Also
+    --------
+    https://helloacm.com/how-to-compute-numerical-integration-in-numpy-python/
+
+    Examples
+    --------
+    >>> _integrate(np.sin, 0, np.pi/2, 100)
+    1.0000102809119051
+    """
+    x = np.linspace(
+        a + (b - a) / (2*N),
+        b - (b - a) / (2*N),
+        N
+    )
+    fx = f(x)
+    area = np.sum(fx)*(b-a)/N
+    return area
+
+
+def normal_cdf(x):
+    """
+    Return the probability for a z-score of ``x``.
+
+    Parameters
+    ----------
+    x : float
+        The value to.. stuff and things.
+
+    Returns
+    -------
+    float
+        The probability that a value below ``x`` will occur.
+
+    References
+    ----------
+    https://en.wikipedia.org/wiki/Normal_distribution#Cumulative_distribution_function
+
+    Examples
+    --------
+    >>> round(normal_cdf(1.96), 3)
+    0.975
+    >>> round(normal_cdf(1.6448536269514722), 3)
+    0.95
+    >>> round(normal_cdf(2.5758293035489004), 3)
+    0.995
+    >>> round(normal_cdf(0), 3)
+    0.5
+    >>> round(normal_cdf(-1), 3)
+    0.159
+
+    # 68-95-99.7 rule
+    >>> round(normal_cdf(1) - normal_cdf(-1), 2)
+    0.68
+    >>> round(normal_cdf(2) - normal_cdf(-2), 2)
+    0.95
+    >>> round(normal_cdf(3) - normal_cdf(-3), 3)
+    0.997
+
+    # The probit function should be the inverse of this
+    >>> round(probit(normal_cdf(1)), 2)
+    1.0
+    >>> round(probit(normal_cdf(2)), 2)
+    2.0
+    """
+    return 0.5 * (1 + erf(x / math.sqrt(2)))
+
+
+def probit(p):
+    """
+    Return the probit function at probability ``p``.
+
+    Parameters
+    ----------
+    p : float
+        Probability that a value will be drawn from the returned range.
+        Must be between 0 and 1 inclusive.
+
+    Returns
+    -------
+    float
+        The value of the probit function at ``p``.
+
+    Notes
+    -----
+    This was shamelessly taken from the Scipy source code. I don't want to
+    deal with getting a scipy requirement working for this project and I only
+    use this bit from it so... I figured I'd make it myself.
+
+    Examples
+    --------
+    >>> round(probit(0.025), 2)
+    -1.96
+    >>> round(probit(0.975), 2)
+    1.96
+    >>> probit(0.5)
+    0.0
+    >>> round(probit(0.95), 12)
+    1.644853626951
+    """
+    if p < 0 or p > 1:
+        raise ValueError("prob must be between 0 and 1 inclusive")
+
+    return math.sqrt(2) * erfinv(2 * p - 1)
+
+
+def z_score_from_confidence_interval(ci):
+    """
+    Return a Z-score for a given confidence interval.
+
+    Parameters
+    ----------
+    ci : float
+        The confidence intervalue to use. Must be beween 0 and 1 inclusive.
+
+    Returns
+    -------
+    float
+        The z-score (the number of standard deviations from the mean) for
+        a symmetric interval.
+
+    Examples
+    --------
+    >>> round(z_score_from_confidence_interval(0.95), 12)
+    1.95996398454
+    >>> round(z_score_from_confidence_interval(0.90), 12)
+    1.644853626951
+    >>> round(z_score_from_confidence_interval(0.975), 12)
+    2.241402727605
+    """
+    p = (ci + 1) / 2
+    return probit(p)
+
+
 def significant_sample_size(N, **kwargs):
     r"""
     Return the significant sample size.
@@ -1543,7 +1697,7 @@ def significant_sample_size(N, **kwargs):
     E = 0.02 if "E" not in kwargs.keys() else kwargs['E']
     p = 0.50 if "p" not in kwargs.keys() else kwargs['p']
     if "CI" in kwargs:
-        Z = scipystats.norm.interval(kwargs["CI"])[-1]
+        Z = z_score_from_confidence_interval(kwargs["CI"])
 
     return int(N * Z**2 * p*(1-p) / ((N - 1) * E**2 + (Z**2 * p*(1-p))))
 
@@ -1600,7 +1754,7 @@ def significant_sample_size_ci(N, CI=0.95, E=0.02, p=0.5):
         and margin of error from a population of size ``N`` and response
         distribution ``p``. Assumes a normal distribution.
     """
-    Z = scipystats.norm.interval(CI)[-1]
+    Z = probit(CI)
     return significant_sample_size(N, Z, E, p)
 
 

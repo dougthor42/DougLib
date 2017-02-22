@@ -20,39 +20,15 @@ import numpy as np
 from pyerf.pyerf import erf, erfinv
 
 # Package / Application
-try:
-    # Imports used by unit test runners
-    from . import decorators
-#    from . import (__project_name__,
-#                   __version__,
-#                   __released__,
-#                   )
-#    logging.debug("Imports for UnitTests")
-except SystemError:
-    try:
-        # Imports used by Spyder
-        import decorators
-#        from __init__ import (__project_name__,
-#                              __version__,
-#                              __released__,
-#                              )
-#        logging.debug("Imports for Spyder IDE")
-    except ImportError:
-         # Imports used by cx_freeze
-        from douglib import decorators
-#        from douglib import (__project_name__,
-#                             __version__,
-#                             __released__,
-#        logging.debug("imports for Executable")
+from . import decorators
 
-
-# PY3: Add function annotations. See PEP 3107.
 
 # ---------------------------------------------------------------------------
 ### Constants
 # ---------------------------------------------------------------------------
 # Defined by SEMI M1-0302
 FLAT_LENGTHS = {50: 15.88, 75: 22.22, 100: 32.5, 125: 42.5, 150: 57.5}
+
 
 # ---------------------------------------------------------------------------
 ### Functions
@@ -1701,6 +1677,7 @@ def significant_sample_size(N, **kwargs):
 
     return int(N * Z**2 * p*(1-p) / ((N - 1) * E**2 + (Z**2 * p*(1-p))))
 
+
 @decorators.Obsolete
 def significant_sample_size_ci(N, CI=0.95, E=0.02, p=0.5):
     """
@@ -1756,7 +1733,3 @@ def significant_sample_size_ci(N, CI=0.95, E=0.02, p=0.5):
     """
     Z = probit(CI)
     return significant_sample_size(N, Z, E, p)
-
-
-if __name__ == "__main__":
-    pass

@@ -20,40 +20,7 @@ import random
 # Third-Party
 
 # Package / Application
-try:
-    # Imports used by unit test runners
-    from .. import core
-#    from . import (__project_name__,
-#                   __version__,
-#                   __released__,
-#                   )
-#    logging.debug("Imports for UnitTests")
-except SystemError:
-    try:
-        # Imports used by Spyder
-        from . import core
-#        from __init__ import (__project_name__,
-#                              __version__,
-#                              __released__,
-#                              )
-#        logging.debug("Imports for Spyder IDE")
-    except (ImportError, SystemError):
-         # Imports used by cx_freeze
-        from douglib import core
-#        from douglib import (__project_name__,
-#                             __version__,
-#                             __released__,
-#        logging.debug("imports for Executable")
-
-#if __name__ == '__main__':
-#    if __package__ is None:
-#        import sys
-#        from os import path
-#        sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-#        import douglib.core as core
-#    else:
-#        from .. import core as core
-
+from .. import core
 
 
 REF_DATA_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)),

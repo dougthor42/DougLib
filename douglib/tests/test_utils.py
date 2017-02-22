@@ -17,37 +17,8 @@ import unittest
 # Third-Party
 
 # Package / Application
-try:
-    # Imports used by unit test runners
-    from .. import utils
-    from .. import decorators
-#    from . import (__project_name__,
-#                   __version__,
-#                   __released__,
-#                   )
-#    logging.debug("Imports for UnitTests")
-except SystemError:
-    try:
-        # Imports used by Spyder
-        import utils
-        import decorators
-#        from __init__ import (__project_name__,
-#                              __version__,
-#                              __released__,
-#                              )
-#        logging.debug("Imports for Spyder IDE")
-    except ImportError:
-         # Imports used by cx_freeze
-        from douglib import utils
-        from douglib import decorators
-#        from douglib import (__project_name__,
-#                             __version__,
-#                             __released__,
-#        logging.debug("imports for Executable")
-
-
-__author__ = "Douglas Thor"
-__version__ = "v0.1.0"
+from .. import utils
+from .. import decorators
 
 #    Things I want to be true:
 #    Classes:
@@ -321,15 +292,3 @@ class TryAgain(unittest.TestCase):
 
     """
     pass
-
-
-def main():
-    """
-    Code to be run if module is called directly.
-    Contains example usages for varoius functions.
-    """
-    pass
-
-
-if __name__ == "__main__":
-    unittest.main(exit=False, verbosity=1)

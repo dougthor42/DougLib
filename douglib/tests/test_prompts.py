@@ -15,34 +15,4 @@ import unittest
 # Third-Party
 
 # Package / Application
-try:
-    # Imports used by unit test runners
-    from .. import prompts
-#    from . import (__project_name__,
-#                   __version__,
-#                   __released__,
-#                   )
-#    logging.debug("Imports for UnitTests")
-except SystemError:
-    try:
-        # Imports used by Spyder
-        import prompts
-#        from __init__ import (__project_name__,
-#                              __version__,
-#                              __released__,
-#                              )
-#        logging.debug("Imports for Spyder IDE")
-    except ImportError:
-         # Imports used by cx_freeze
-        from douglib import prompts
-#        from douglib import (__project_name__,
-#                             __version__,
-#                             __released__,
-#        logging.debug("imports for Executable")
-
-__author__ = "Douglas Thor"
-__version__ = "v0.1.0"
-
-
-if __name__ == "__main__":
-    unittest.main(exit=False, verbosity=1)
+from .. import prompts

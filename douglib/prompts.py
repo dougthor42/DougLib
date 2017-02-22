@@ -178,12 +178,3 @@ def wafer_info():
     excl = exclusion_size()
     fss = fss_exclusion()
     return (die_xy, dia, excl, fss)
-
-
-def main():
-    """ Main Code """
-    pass
-
-
-if __name__ == "__main__":
-    main()

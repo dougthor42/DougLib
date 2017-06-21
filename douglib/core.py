@@ -21,6 +21,7 @@ from pyerf.pyerf import erf, erfinv
 
 # Package / Application
 from . import decorators
+from .utils import DougLibError
 
 
 # ---------------------------------------------------------------------------
@@ -207,8 +208,7 @@ def clip(x, min_max, clipval=None):
     if clipval is None:
         clipval = (x_min, x_max)
 
-    if not (isinstance(clipval, tuple)
-            or isinstance(clipval, list)) and len(clipval) == 2:
+    if not (isinstance(clipval, (tuple, list)) and len(clipval) == 2):
         error_text = "clipval must be a tuple or list of length 2"
         raise TypeError(error_text)
 
@@ -441,6 +441,8 @@ def threshold_1d_array(array, y):
     else:
         low = array[indicies[0]]
         high = array[indicies[1]]
+        if high == low:
+            raise ValueError("Array high and low values are the same")
         frac_x = (y - low) / float(high - low) + indicies[0]
 
     return frac_x
@@ -1181,7 +1183,7 @@ def convert_rcd_xyd(rcd):
     return sort_by_column([(_i[1], _i[0], _i[2]) for _i in rcd], 0, 1)
 
 
-def array_2d_to_str(array_2d):
+def array_2d_to_str(array_2d, delim=''):
     """
     Convert a 2D array to a spreadsheet string.
 
@@ -1189,6 +1191,9 @@ def array_2d_to_str(array_2d):
     ----------
     array_2d : list of lists
         The array to convert.
+    delim : str, optional
+        The delimiter. Defaults to the empty string. Use ',' to make a true
+        CSV string.
 
     Returns
     -------
@@ -1197,7 +1202,7 @@ def array_2d_to_str(array_2d):
     """
     output_str = ""
     for line in array_2d:
-        output_str += ''.join([str(i) for i in line]) + "\n"
+        output_str += delim.join([str(i) for i in line]) + "\n"
     return output_str
 
 
@@ -1353,6 +1358,10 @@ def hash_file(file_object, hasher, blocksize=65536):
     """
     buf = file_object.read(blocksize)
     while len(buf) > 0:
+        try:
+            buf = buf.encode('utf-8')
+        except UnicodeError:
+            pass
         hasher.update(buf)
         buf = file_object.read(blocksize)
     return hasher.digest()

@@ -89,7 +89,7 @@ class TestClass(object):
         return "repr for TestClass"
 
 
-class FunctionDecorator(unittest.TestCase):
+class TestFunctionDecorator(unittest.TestCase):
     """
     Make sure that test_func.__name__, .__doc__, .__decor__, .__decordoc__
     are working as expected:
@@ -125,7 +125,7 @@ class FunctionDecorator(unittest.TestCase):
                          " ExampleDecorator docstring ")
 
 
-class MethodDecorator(unittest.TestCase):
+class TestMethodDecorator(unittest.TestCase):
     """
     Make sure that temp_method.__name__, .__doc__, .__decor__, .__decordoc__
     are working as expected:
@@ -161,7 +161,7 @@ class MethodDecorator(unittest.TestCase):
                          " ExampleDecorator docstring ")
 
 
-class ClassDecorator(unittest.TestCase):
+class TestClassDecorator(unittest.TestCase):
     """
     Make sure that MyClass.__str__, .__repr__, .__decor__, .__decordoc__
     are working as expected:
@@ -201,7 +201,7 @@ class ClassDecorator(unittest.TestCase):
                          "repr for TestClass")
 
 
-class MultipleFunctionDecorators(unittest.TestCase):
+class TestMultipleFunctionDecorators(unittest.TestCase):
     """
     Verifies that a function can have an arbitrary number of decorators.
     """
@@ -246,7 +246,7 @@ class MultipleFunctionDecorators(unittest.TestCase):
             self.fail("4 decorators caused an exception to be raised!")
 
 
-class UnjoinPath(unittest.TestCase):
+class TestUnjoinPath(unittest.TestCase):
     """ Verifies the unjoin_path() function """
     known_values = (("C:\\Temp",
                      ["C:\\", "Temp"]),
@@ -271,7 +271,7 @@ class UnjoinPath(unittest.TestCase):
                 self.assertEqual(result, expected)
 
 
-class TryAgain(unittest.TestCase):
+class TestTryAgain(unittest.TestCase):
     """
     Need to check:
 

@@ -31,7 +31,7 @@ REF_DATA_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                              )
 
 
-class EngineeringNotationKnownValues(unittest.TestCase):
+class TestEngineeringNotationKnownValues(unittest.TestCase):
     """ Known-value testing for to_ and from_engineering_notation """
     # Known Values: (engr, float)
     known_values = (("1.1y", 1.1e-24),
@@ -55,7 +55,7 @@ class EngineeringNotationKnownValues(unittest.TestCase):
             self.assertEqual(string, result)
 
 
-class RoundToMultiple(unittest.TestCase):
+class TestRoundToMultiple(unittest.TestCase):
     """ Known Value testing for round_to_multiple. """
     # (value, round_to, result)
     known_values = ((1.23456, 2, 2),
@@ -82,7 +82,7 @@ class RoundToMultiple(unittest.TestCase):
             raise AssertionError(err_txt.format(err))
 
 
-class Rescale(unittest.TestCase):
+class TestRescale(unittest.TestCase):
     """ Unit Testing of the rescale function """
     known_values = ((5, (10, 20), (0, 1), -0.5),
                     (27, (0, 200), (0, 5), 0.675),
@@ -115,7 +115,7 @@ class Rescale(unittest.TestCase):
             raise AssertionError(err_txt.format(err))
 
 
-class Clip(unittest.TestCase):
+class TestClip(unittest.TestCase):
     """ Unit Testing of the clip function """
     known_values = ((5, (10, 20), (0, 1), 0),
                     (27, (0, 200), (0, 5), 27),
@@ -148,7 +148,7 @@ class Clip(unittest.TestCase):
             raise AssertionError(err_txt.format(err))
 
 
-class Threshold1DArray(unittest.TestCase):
+class TestThreshold1DArray(unittest.TestCase):
     """ Unit Testing of the threshold_1d_array function """
     list1 = range(8)
     list2 = [x*2 for x in range(10)]
@@ -203,7 +203,7 @@ class TestInterpolate1DArray(unittest.TestCase):
             core.interpolate_1d_array(array, math.inf)
 
 
-class PickXatY(unittest.TestCase):
+class TestPickXatY(unittest.TestCase):
     """ Unit Testing of the pick_x_at_y function """
     xy_array1 = [(0, 0), (1, 1), (2, 2), (3, 3)]
     xy_array2 = [(0, 0), (1, 2), (2, 4), (3, 9)]
@@ -280,7 +280,7 @@ class TestReservoirSampling(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
-class ReedholmDieNameToRC(unittest.TestCase):
+class TestReedholmDieNameToRC(unittest.TestCase):
     """ Tests the reedholm_die_to_rc function """
     # (Reedholm Die Name, (row, column))
     known_values = (("x0y0", (0, 0)),
@@ -303,7 +303,7 @@ class ReedholmDieNameToRC(unittest.TestCase):
                          )
 
 
-class RCtoRadius(unittest.TestCase):
+class TestRCtoRadius(unittest.TestCase):
     """ Tests the rc_to_radius function """
     # ((r_coord, c_coord), (die_x, die_y), (center_x, center_y), expected)
     known_values = (((5, 2), (2.43, 3.3), (18, 4), 43.17440909),
@@ -316,7 +316,7 @@ class RCtoRadius(unittest.TestCase):
 
 
 #@unittest.skip("Skipped")
-class BinaryFileCompare(unittest.TestCase):
+class TestBinaryFileCompare(unittest.TestCase):
     """ Tests the binary_file_compare function """
     ref_file = "ref_BinaryFileCompare.csv"
     bad_file = ("ref_BinaryFileCompare_start_diff.csv",

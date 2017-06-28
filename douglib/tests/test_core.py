@@ -16,8 +16,16 @@ Created on Wed May 14 15:29:34 2014
 import os.path
 import unittest
 import random
+import hashlib
+import io
+import math
+from types import GeneratorType
 
 # Third-Party
+from hypothesis import given
+from hypothesis import assume
+from hypothesis import strategies as st
+import numpy as np
 
 # Package / Application
 from .. import core
@@ -28,7 +36,7 @@ REF_DATA_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                              )
 
 
-class EngineeringNotationKnownValues(unittest.TestCase):
+class TestEngineeringNotationKnownValues(unittest.TestCase):
     """ Known-value testing for to_ and from_engineering_notation """
     # Known Values: (engr, float)
     known_values = (("1.1y", 1.1e-24),
@@ -51,8 +59,12 @@ class EngineeringNotationKnownValues(unittest.TestCase):
             result = core.to_engineering_notation(number)
             self.assertEqual(string, result)
 
+    def test_invalid_suffix_raises_keyerror(self):
+        with self.assertRaises(KeyError):
+            core.from_engineering_notation('1.7q')
 
-class RoundToMultiple(unittest.TestCase):
+
+class TestRoundToMultiple(unittest.TestCase):
     """ Known Value testing for round_to_multiple. """
     # (value, round_to, result)
     known_values = ((1.23456, 2, 2),
@@ -68,8 +80,18 @@ class RoundToMultiple(unittest.TestCase):
             result = core.round_to_multiple(x, multiple)
             self.assertAlmostEqual(value, result)
 
+    @given(st.floats(), st.floats())
+    def test_exceptions(self, x, y):
+        try:
+            core.round_to_multiple(x, y)
+        except (ArithmeticError, ValueError):
+            return
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
 
-class Rescale(unittest.TestCase):
+
+class TestRescale(unittest.TestCase):
     """ Unit Testing of the rescale function """
     known_values = ((5, (10, 20), (0, 1), -0.5),
                     (27, (0, 200), (0, 5), 0.675),
@@ -88,8 +110,68 @@ class Rescale(unittest.TestCase):
             result = core.rescale(x, orig_range, new_range)
             self.assertAlmostEqual(expected_result, result)
 
+    @given(st.floats(),
+           st.tuples(st.floats(), st.floats()),
+           st.tuples(st.floats(), st.floats()),
+           )
+    def test_exceptions(self, x, orig, new):
+        try:
+            core.rescale(x, orig, new)
+        except ArithmeticError:
+            return
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
 
-class Clip(unittest.TestCase):
+
+class TestRescaleClip(unittest.TestCase):
+    """ Unit Testing of the rescale function """
+    known_values = ((5, (10, 20), (0, 1), 0),
+                    (27, (0, 200), (0, 5), 0.675),
+                    (1.5, (0, 1), (0, 10), 10),
+                    (5, (10, 20), (-1, 1), -1),
+                    (-5, (10, 20), (-1, 1), -1),
+                    (-5, (0, 20), (-10, 10), -10),
+                    (0, (12, 20), (-10, 10), -10),
+                    (0.5, (3, 6), (0, 20), 0),
+                    (5, (0, 10), (0, -50), -50),
+                    (5, (-10, 0), (0, 50), 50),
+                    )
+
+    def test_known_values(self):
+        for x, orig_range, new_range, expected_result in self.known_values:
+            result = core.rescale_clip(x, orig_range, new_range)
+            self.assertAlmostEqual(expected_result, result)
+
+    @given(st.floats(),
+           st.tuples(st.floats(), st.floats()),
+           st.tuples(st.floats(), st.floats()),
+           )
+    def test_exceptions(self, x, orig, new):
+        try:
+            core.rescale_clip(x, orig, new)
+        except ArithmeticError:
+            return
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
+
+    @given(st.floats(allow_nan=False, allow_infinity=False),
+           st.tuples(st.floats(), st.floats()),
+           st.tuples(st.floats(), st.floats()),
+           )
+    def test_result_within_new_scale(self, x, orig, new):
+        assume(orig[0] != orig[1])
+        assume(new[0] != new[1])
+        assume(new[1] > new[0])
+        assume(all(abs(y) >= 1e-100 and abs(y) <= 1e100 for y in orig + new))
+        assume(all(abs(y2 - y1) >= 1e-6 for y2, y1 in [orig, new]))
+        res = core.rescale_clip(x, orig, new)
+        self.assertGreaterEqual(res, new[0])
+        self.assertLessEqual(res, new[1])
+
+
+class TestClip(unittest.TestCase):
     """ Unit Testing of the clip function """
     known_values = ((5, (10, 20), (0, 1), 0),
                     (27, (0, 200), (0, 5), 27),
@@ -108,8 +190,131 @@ class Clip(unittest.TestCase):
             result = core.clip(x, (x_min, x_max), clipval=clipval)
             self.assertEqual(expected, result)
 
+    @given(st.floats(),
+           st.tuples(st.floats(), st.floats()),
+           st.tuples(st.floats(), st.floats())
+           )
+    def test_exceptions(self, x, _range, clipval):
+        try:
+            core.clip(x, _range, clipval)
+        except ArithmeticError:
+            return
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
 
-class Threshold1DArray(unittest.TestCase):
+    def test_invalid_clipval_type(self):
+        invalid_clipvals = [
+            (1, 2, 3),
+            "Hello",
+            {"a": 27},
+        ]
+        for clipval in invalid_clipvals:
+            with self.subTest(clipval=clipval):
+                with self.assertRaises(TypeError):
+                    core.clip(0, (0, 1), clipval)
+
+
+class TestMaxDistSqrd(unittest.TestCase):
+
+    known_values = (
+        ((0, 0), (1, 1), 0.5),
+        ((1, 1), (1, 1), 4.5),
+        ((10, 15), (2, 3), 393.25),
+    )
+
+    def test_known_values(self):
+        for center, size, expected in self.known_values:
+            with self.subTest(center=center, size=size, expected=expected):
+                result = core.max_dist_sqrd(center, size)
+                self.assertAlmostEqual(expected, result)
+
+
+class TestMaxDist(unittest.TestCase):
+
+    known_values = (
+        ((0, 0), (1, 1), 0.7071067811865476),
+        ((1, 1), (1, 1), 2.1213203435596424),
+        ((10, 15), (2, 3), 19.83053201505194),
+    )
+
+    def test_known_values(self):
+        for center, size, expected in self.known_values:
+            with self.subTest(center=center, size=size, expected=expected):
+                result = core.max_dist(center, size)
+                self.assertEqual(expected, result)
+
+
+class TestRCDto2DArray(unittest.TestCase):
+
+    known_values = (
+        ([[0, 0, 'a'], [0, 1, 'b'], [0, 2, 'c'],
+          [1, 0, 'd'], [1, 1, 'e'], [1, 2, 'f'],
+          [2, 0, 'g'], [2, 2, 'i']],
+         0,
+         [['a', 'b', 'c'], ['d', 'e', 'f'], ['g', 0, 'i']]
+         ),
+    )
+
+    def test_known_values(self):
+        for data, missing, expected in self.known_values:
+            with self.subTest(data=data, missing=missing, expected=expected):
+                result = core.rcd_to_2d_array(data, missing)
+                self.assertEqual(expected, result)
+
+
+class TestXYDto2DArray(unittest.TestCase):
+
+    known_values = (
+        ([[0, 0, 'a'], [0, 1, 'b'], [0, 2, 'c'],
+          [1, 0, 'd'], [1, 1, 'e'], [1, 2, 'f'],
+          [2, 0, 'g'], [2, 2, 'i']],
+         0,
+         [['a', 'b', 'c'], ['d', 'e', 'f'], ['g', 0, 'i']]
+         ),
+    )
+
+    def test_known_values(self):
+        for data, missing, expected in self.known_values:
+            with self.subTest(data=data, missing=missing, expected=expected):
+                result = core.xyd_to_2d_array(data, missing)
+                self.assertEqual(expected, result)
+
+
+class TestFrange(unittest.TestCase):
+
+    known_values = (
+        (0, 1, 0.5, [0, 0.5]),
+        (0, 2, 0.5, [0, 0.5, 1, 1.5]),
+    )
+
+    def test_known_values(self):
+        for start, stop, step, expected in self.known_values:
+            with self.subTest(start=start, stop=stop, step=step,
+                              expected=expected):
+                result = list(core.frange(start, stop, step))
+                self.assertEqual(expected, result)
+
+    @given(st.floats(), st.floats(), st.floats())
+    def test_return_type(self, start, stop, step):
+        self.assertIsInstance(core.frange(start, stop, step), GeneratorType)
+
+
+class TestArray2dToStr(unittest.TestCase):
+
+    known_values = (
+        ([[1, 2], [3, 4]], ',', "1,2\n3,4\n"),
+        ([[1, 2], [3, 4]], '', "12\n34\n"),
+    )
+
+    def test_known_values(self):
+        for array, delim, expected in self.known_values:
+            with self.subTest(array=array, delim=delim, expected=expected):
+                result = core.array_2d_to_str(array, delim)
+                self.assertEqual(expected, result)
+
+
+class TestThreshold1DArray(unittest.TestCase):
     """ Unit Testing of the threshold_1d_array function """
     list1 = range(8)
     list2 = [x*2 for x in range(10)]
@@ -125,8 +330,46 @@ class Threshold1DArray(unittest.TestCase):
             result = core.threshold_1d_array(array, y)
             self.assertAlmostEqual(expected_result, result)
 
+    @given(st.lists(st.floats()), st.floats())
+    def test_exceptions(self, array, y):
+        allowed_exceptions = (ValueError, IndexError, ZeroDivisionError)
+        try:
+            core.threshold_1d_array(array, y)
+        except allowed_exceptions:
+            return
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
 
-class PickXatY(unittest.TestCase):
+    def test_empty_array_raises_index_error(self):
+        with self.assertRaises(ValueError):
+            core.threshold_1d_array([], 0)
+
+
+class TestInterpolate1DArray(unittest.TestCase):
+
+    @given(st.lists(st.floats()), st.floats())
+    def test_exceptions(self, array, x):
+        allowed_exceptions = (ValueError, IndexError, OverflowError)
+        try:
+            core.interpolate_1d_array(array, x)
+        except allowed_exceptions:
+            return
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
+
+    def test_empty_array_raises_index_error(self):
+        with self.assertRaises(IndexError):
+            core.interpolate_1d_array([], 0)
+
+    @given(st.lists(st.floats(), min_size=2))
+    def test_x_inf_raises_overflow_error(self, array):
+        with self.assertRaises(OverflowError):
+            core.interpolate_1d_array(array, math.inf)
+
+
+class TestPickXatY(unittest.TestCase):
     """ Unit Testing of the pick_x_at_y function """
     xy_array1 = [(0, 0), (1, 1), (2, 2), (3, 3)]
     xy_array2 = [(0, 0), (1, 2), (2, 4), (3, 9)]
@@ -147,9 +390,94 @@ class PickXatY(unittest.TestCase):
             result = core.pick_x_at_y(xy_array, y)
             self.assertAlmostEqual(expected_result, result)
 
-    @unittest.skip("demonstrating skipping")
-    def test_skip_example(self):
-        self.fail("shouldn't ever get here")
+    @given(st.lists(st.tuples(st.floats(), st.floats())), st.floats())
+    def test_exceptions(self, xy_array, y):
+        allowed_exceptions = (ValueError, IndexError, ZeroDivisionError)
+        try:
+            core.pick_x_at_y(xy_array, y)
+        except allowed_exceptions:
+            pass
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
+
+
+class TestHashFile(unittest.TestCase):
+
+    def test_return_type(self):
+
+        h = hashlib.sha256()
+        f = io.StringIO("Some test data")
+        self.assertIsInstance(core.hash_file(f, h), bytes)
+
+
+class Test_Integrate(unittest.TestCase):
+
+    known_values = (
+        (lambda x: x*2, 0, 2, 4),
+        (lambda x: x**2, -1, 2, 3),
+        (lambda x: x**3, 1, 3, 20),
+        (lambda x: 2 * np.sin(x) + 1, 1, 3, 5.0606),
+    )
+
+    def test_integrate(self):
+        for func, start, stop, expected in self.known_values:
+            with self.subTest(func=func, start=start, stop=stop,
+                              expected=expected):
+                result = core._integrate(func, start, stop)
+                self.assertAlmostEqual(expected, result, places=3)
+
+
+class TestNormalCDF(unittest.TestCase):
+
+    # (input, rounding value, expected)
+    known_values = (
+        (1.96, 3, 0.975),
+        (1.6448536269514722, 3, 0.95),
+        (2.5758293035489004, 3, 0.995),
+        (0, 3, 0.5),
+        (-1, 3, 0.159),
+    )
+
+    def test_known_values(self):
+        for x, round_to, expected in self.known_values:
+            with self.subTest(x=x, round_to=round_to, expected=expected):
+                result = round(core.normal_cdf(x), round_to)
+                self.assertEqual(expected, result)
+
+    @given(st.floats())
+    def test_all_floats_are_valid_inputs(self, x):
+        try:
+            core.normal_cdf(x)
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
+
+
+class TestProbit(unittest.TestCase):
+
+    known_values = (
+        (0.025, 2, -1.96),
+        (0.975, 2, 1.96),
+        (0.5, 2, 0.0),
+        (0.95, 12, 1.644853626951),
+    )
+
+    def test_known_values(self):
+        for x, round_to, expected in self.known_values:
+            with self.subTest(x=x, round_to=round_to, expected=expected):
+                result = round(core.probit(x), round_to)
+                self.assertEqual(expected, result)
+
+    @given(st.floats())
+    def test_exceptions(self, x):
+        try:
+            core.probit(x)
+        except ValueError:
+            pass
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
 
 
 class TestReservoirSampling(unittest.TestCase):
@@ -196,7 +524,7 @@ class TestReservoirSampling(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
-class ReedholmDieNameToRC(unittest.TestCase):
+class TestReedholmDieNameToRC(unittest.TestCase):
     """ Tests the reedholm_die_to_rc function """
     # (Reedholm Die Name, (row, column))
     known_values = (("x0y0", (0, 0)),
@@ -219,7 +547,7 @@ class ReedholmDieNameToRC(unittest.TestCase):
                          )
 
 
-class RCtoRadius(unittest.TestCase):
+class TestRCtoRadius(unittest.TestCase):
     """ Tests the rc_to_radius function """
     # ((r_coord, c_coord), (die_x, die_y), (center_x, center_y), expected)
     known_values = (((5, 2), (2.43, 3.3), (18, 4), 43.17440909),
@@ -232,7 +560,7 @@ class RCtoRadius(unittest.TestCase):
 
 
 #@unittest.skip("Skipped")
-class BinaryFileCompare(unittest.TestCase):
+class TestBinaryFileCompare(unittest.TestCase):
     """ Tests the binary_file_compare function """
     ref_file = "ref_BinaryFileCompare.csv"
     bad_file = ("ref_BinaryFileCompare_start_diff.csv",
@@ -307,6 +635,20 @@ class TestSortByColumn(unittest.TestCase):
             core.sort_by_column(self.array, 0, hello=True)
         with self.assertRaises(SyntaxError):
             core.sort_by_column(self.array, 0, hello=True, aaa=False)
+
+
+class TestConvertRcdXyd(unittest.TestCase):
+
+    known_values = (
+        ([(1, 2, "a"), (3, 4, "b"), (5, 6, "c")],
+         [(2, 1, "a"), (4, 3, "b"), (6, 5, "c")]),
+    )
+
+    def test_known_values(self):
+        for rcd, expected in self.known_values:
+            with self.subTest(rcd=rcd, expected=expected):
+                result = core.convert_rcd_xyd(rcd)
+                self.assertEqual(expected, result)
 
 
 def generic_test_equal(function, known_values):

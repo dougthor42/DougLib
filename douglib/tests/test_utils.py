@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@name:          new_program.py
-@vers:          0.1.0
-@author:        dthor
-@created:       Fri Jul 25 09:44:25 2014
-@descr:         A new file
+Unit tests for :py:mod:`douglib.utils`.
 """
 # ---------------------------------------------------------------------------
 ### Imports
@@ -13,237 +9,57 @@
 import os.path
 import sys
 import unittest
+import time
+import datetime as dt
 
 # Third-Party
+from hypothesis import given
+#from hypothesis import assume
+from hypothesis import strategies as st
 
 # Package / Application
 from .. import utils
-from .. import decorators
-
-#    Things I want to be true:
-#    Classes:
-#        temp.__str__()                 = __str__() for TestClass
-#        temp.__repr__                  = __repr__() for TestClass"
-#        temp.__doc__                   = docsctring of TestClass
-#        temp.__decor__                 = the decorators for the class
-#        temp.__decordoc__              = class's decorator docstrings
-#    Class Methods:
-#        temp.temp_method.__name__      = "temp_method"
-#        temp.temp_method.__doc__       = " temp_method docstring "
-#        temp.temp_method.__decor__     = "ExampleDecorator"
-#        temp.temp_method.__decordoc__  = " ExampleDecorator docstring "
-#    Functions:
-#        temp_func.__name__             = "temp_func"
-#        temp_func.__doc__              = " docstring for temp_func "
-#        temp_func.__decor__            = "ExampleDecorator"
-#        temp_func.__decordoc__         = " ExampleDecorator docstring "
-#
-#    Some decorators should make aspects of them public, such as the Cached
-#    decorator: the user should be able to call Cached.cache and get a dict
-#    of the cached values.
 
 
-class TempClass(object):
-    """
-    Decorator testing
-    """
-    def __init__(self, n):
-        self.n = n
+class TestDougLibError(unittest.TestCase):
 
-    @decorators.ExampleDecorator
-    def temp_method(self):
-        """ temp_method docstring """
-        a = b = 1
-        result = []
-        for _ in range(self.n):
-            result.append(a)
-            a, b = b, a + b
-        return result
+    def test_instantiation(self):
+        try:
+            utils.DougLibError()
+        except Exception:
+            self.fail("An exception was raised when instantiating the class")
 
 
-@decorators.ExampleDecorator
-def temp_func(a):
-    """ docstring for temp_func """
-    return a
+class TestRangeError(unittest.TestCase):
 
+    def test_instantiation(self):
+        try:
+            utils.RangeError(20)
+        except Exception:
+            self.fail("An exception was raised when instantiating the class")
 
-@decorators.ExampleDecorator
-class TestClass(object):
-    """ TestClass docstring """
-    def __init__(self, n):
-        self.n = n
-
-    def another_method(self):
-        """ docstring for another_method """
-        a = b = 1
-        result = []
-        for _ in range(self.n):
-            result.append(a)
-            a, b = b, a + b
-        return result
-
-    def __str__(self):
-        return "str representation of TestClass"
-
-    def __repr__(self):
-        return "repr for TestClass"
-
-
-class TestFunctionDecorator(unittest.TestCase):
-    """
-    Make sure that test_func.__name__, .__doc__, .__decor__, .__decordoc__
-    are working as expected:
-
-        temp_func.__name__             = "temp_func"
-        temp_func.__doc__              = " docstring for temp_func "
-        temp_func.__decor__            = "ExampleDecorator"
-        temp_func.__decordoc__         = " ExampleDecorator docstring "
-    """
-
-    def test_funcion(self):
-        """ Check that the function actually runs """
-        self.assertEqual(temp_func(5), 5)
-
-    def test_name(self):
-        """ Check that temp_func.__name__ returns correctly """
-        self.assertEqual(temp_func.__name__,
-                         "temp_func")
-
-    def test_doc(self):
-        """ Check that temp_func.__doc__ returns correctly """
-        self.assertEqual(temp_func.__doc__,
-                         " docstring for temp_func ")
-
-    def test_decor(self):
-        """ Check that temp_func.__decor__ returns correctly """
-        self.assertEqual(temp_func.__decor__,
-                         "ExampleDecorator")
-
-    def test_decordoc(self):
-        """ Check that temp_func.__decordoc__ returns correctly """
-        self.assertEqual(temp_func.__decordoc__,
-                         " ExampleDecorator docstring ")
-
-
-class TestMethodDecorator(unittest.TestCase):
-    """
-    Make sure that temp_method.__name__, .__doc__, .__decor__, .__decordoc__
-    are working as expected:
-
-        my_class.temp_method.__name__      = "temp_method"
-        my_class.temp_method.__doc__       = " temp_method docstring "
-        my_class.temp_method.__decor__     = "ExampleDecorator"
-        my_class.temp_method.__decordoc__  = " ExampleDecorator docstring "
-    """
-    def setUp(self):        # pylint: disable=C0103
-        """ setUp the TestCase by instancing the class """
-        self.my_class = TempClass(250)
-        self.my_class.temp_method()
-
-    def test_name(self):
-        """ Check that temp_method.__name__ returns correctly """
-        self.assertEqual(self.my_class.temp_method.__name__,
-                         "temp_method")
-
-    def test_doc(self):
-        """ Check that temp_method.__doc__ returns correctly """
-        self.assertEqual(self.my_class.temp_method.__doc__,
-                         " temp_method docstring ")
-
-    def test_decor(self):
-        """ Check that temp_method.__decor__ returns correctly """
-        self.assertEqual(self.my_class.temp_method.__decor__,
-                         "ExampleDecorator")
-
-    def test_decordoc(self):
-        """ Check that temp_method.__decordoc__ returns correctly """
-        self.assertEqual(self.my_class.temp_method.__decordoc__,
-                         " ExampleDecorator docstring ")
-
-
-class TestClassDecorator(unittest.TestCase):
-    """
-    Make sure that MyClass.__str__, .__repr__, .__decor__, .__decordoc__
-    are working as expected:
-
-        MyClass.__str__                   = "TestClass"
-        MyClass.__repr__                  = whatever the repr def is.
-        MyClass.__decor__                 = the decorators for the class
-        MyClass.__decordoc__              = class's decorator docstrings
-    """
-    def setUp(self):        # pylint: disable=C0103
-        self.my_class = TestClass(5)
-        self.my_class.another_method()             # calls __get__
+    def test_instantiation_raises_with_no_arg(self):
+        with self.assertRaises(TypeError):
+            utils.RangeError()
 
     def test_str(self):
-        """ Check that my_class.__str__() returns correctly """
-        self.assertEqual(self.my_class.__str__(),
-                         "str representation of TestClass")
-
-    def test_doc(self):
-        """ Check that my_class.__doc__ returns correctly """
-        self.assertEqual(self.my_class.__doc__,
-                         " TestClass docstring ")
-
-    def test_decor(self):
-        """ Check that my_class.__decor__ returns correctly """
-        self.assertEqual(self.my_class.__decor__,
-                         "ExampleDecorator")
-
-    def test_decordoc(self):
-        """ Check that my_class.__decordoc__ returns correctly """
-        self.assertEqual(self.my_class.__decordoc__,
-                         " ExampleDecorator docstring ")
-
-    def test_repr(self):
-        """ Check that the __repr__() returns correctly """
-        self.assertEqual(self.my_class.__repr__(),
-                         "repr for TestClass")
+        val = 20
+        re = utils.RangeError(val)
+        self.assertEqual(str(val), str(re))
 
 
-class TestMultipleFunctionDecorators(unittest.TestCase):
-    """
-    Verifies that a function can have an arbitrary number of decorators.
-    """
-    def test_1_decorator(self):
+class TestObsoleteError(unittest.TestCase):
+
+    def test_instantiation(self):
         try:
-            @decorators.Timed
-            def _1_decor():
-                pass
-        except:
-            self.fail("1 decorator caused an exception to be raised!")
+            utils.ObsoleteError()
+        except Exception:
+            self.fail("An exception was raised when instantiating the class")
 
-    def test_2_decorator(self):
-        try:
-            @decorators.Timed
-            @decorators.Traced
-            def _2_decor():
-                pass
-        except:
-            self.fail("2 decorators caused an exception to be raised!")
-
-    @unittest.skip("Skipped")
-    def test_3_decorator(self):
-        try:
-            @decorators.Timed
-            @decorators.Traced
-            @decorators.Deprecated
-            def _3_decor():
-                pass
-        except:
-            self.fail("3 decorators caused an exception to be raised!")
-
-    @unittest.skip("Skipped")
-    def test_4_decorator(self):
-        try:
-            @decorators.Timed
-            @decorators.Traced
-            @decorators.Deprecated
-            @decorators.ExampleDecorator
-            def _4_decor():
-                pass
-        except:
-            self.fail("4 decorators caused an exception to be raised!")
+    def test_str(self):
+        val = 20
+        re = utils.ObsoleteError(val)
+        self.assertEqual(str(val), str(re))
 
 
 class TestUnjoinPath(unittest.TestCase):
@@ -272,23 +88,342 @@ class TestUnjoinPath(unittest.TestCase):
 
 
 class TestTryAgain(unittest.TestCase):
-    """
-    Need to check:
 
-    - Raise error when no args are lists, tuples, generators, or other
-      non-dict iterable
-    - Raise error when list items are not the same length
-    - Runs func with no args when arg is None and kwargs is None
-    - Runs func with 1 arg when arg is single element
-    - Runs func with multiple args when arg is non-dict iterable
-    - Runs func with kwarg when arg is None and kwarg is not None
-    - Runs func with arg and kwargs when arg is single elem and kwarg != None
-    - Runs func with args and kwargs when arg is non-dict iterable
-      and kwarg is not None
-    - Works with list of functions and single-elements for others
-    - Works with list of args and single-elements for others
-    - Works with list of kwargs and single-elements for others
-    - Works with list of exceptions and single-elements for others
+    def test_try_again(self):
+        expected = 3
+        errors = [ValueError] * 3
+        args = [1, 2, expected]
+        kwargs = [None] * 3
 
-    """
-    pass
+        def func_to_test(a):
+            if a == expected:
+                return a
+            else:
+                raise ValueError
+
+        funcs = [func_to_test] * 3
+        result = utils.try_again(funcs, args, kwargs, errors)
+        self.assertEqual(result, expected)
+
+    def test_raises_type_error_when_not_all_iterable(self):
+        with self.assertRaises(TypeError):
+            utils.try_again("a", None, None, None)
+
+    def test_raises_value_error_when_not_all_same_lenght(self):
+        with self.assertRaises(ValueError):
+            utils.try_again(["a", 'b'], [None], [None], [None])
+
+    def test_funcs_use_kwargs(self):
+        expected = 3
+        errors = [ValueError] * 3
+        args = [None] * 3
+        kwargs = [{'a': 1}, {'a': 2}, {'a': expected}]
+
+        def func_to_test(a):
+            if a == expected:
+                return a
+            else:
+                raise ValueError
+
+        funcs = [func_to_test] * 3
+        result = utils.try_again(funcs, args, kwargs, errors)
+        self.assertEqual(result, expected)
+
+    def test_funcs_have_star_args(self):
+        expected = (7, 8, 9)
+        errors = [ValueError] * 3
+        args = [[1, 2, 3], [4, 5, 6], expected]
+        kwargs = [None] * 3
+
+        def func_to_test(*a):
+            if a == expected:
+                return a
+            else:
+                raise ValueError
+
+        funcs = [func_to_test] * 3
+        result = utils.try_again(funcs, args, kwargs, errors)
+        self.assertEqual(result, expected)
+
+    def test_funcs_have_star_args_and_use_kwargs(self):
+        expected = 3
+        errors = [ValueError] * 3
+        args = [[1, 2, 3]] * 3
+        kwargs = [{'b': 1}, {'b': 2}, {'b': expected}]
+
+        def func_to_test(*a, b):
+            if b == expected:
+                return b
+            else:
+                raise ValueError
+
+        funcs = [func_to_test] * 3
+        result = utils.try_again(funcs, args, kwargs, errors)
+        self.assertEqual(result, expected)
+
+    def test_different_functions_and_errors(self):
+        expected = 3
+        errors = [ValueError, IndexError, KeyError]
+        args = [None] * 3
+        kwargs = [None] * 3
+        funcs = [lambda: raise_(ValueError),
+                 lambda: raise_(IndexError),
+                 lambda: expected]
+        result = utils.try_again(funcs, args, kwargs, errors)
+        self.assertEqual(result, expected)
+
+    def test_raises_runtime_error_if_nothing_succeeds(self):
+        funcs = [lambda: raise_(ValueError)] * 5
+        kwargs = args = [None] * 5
+        errors = [ValueError] * 5
+        with self.assertRaises(RuntimeError):
+            utils.try_again(funcs, args, kwargs, errors)
+
+    def test_raises_custom_error_if_nothing_succeeds(self):
+        funcs = [lambda: raise_(ValueError)] * 5
+        kwargs = args = [None] * 5
+        errors = [ValueError] * 5
+        custom_error = OSError
+        with self.assertRaises(custom_error):
+            utils.try_again(funcs, args, kwargs, errors, custom_error)
+
+
+class TestBorg(unittest.TestCase):
+
+    def test_instantiation(self):
+        try:
+            utils.Borg()
+        except Exception:
+            self.fail("An exception was raised when instantiating the class")
+
+    def test_all_instances_have_different_id(self):
+        a = utils.Borg()
+        b = utils.Borg()
+        self.assertNotEqual(id(a), id(b))
+
+    def test_all_instances_have_same_data(self):
+        a = utils.Borg()
+        b = utils.Borg()
+        a.value = 5
+        self.assertEqual(a.value, b.value)
+
+
+class TestSingleton(unittest.TestCase):
+
+    def test_instantiation(self):
+        try:
+            utils.Singleton()
+        except Exception:
+            self.fail("An exception was raised when instantiating the class")
+
+    def test_all_instances_have_same_id(self):
+        a = utils.Singleton()
+        b = utils.Singleton()
+        self.assertEqual(id(a), id(b))
+
+    def test_all_instances_have_same_data(self):
+        a = utils.Singleton()
+        b = utils.Singleton()
+        a.value = 5
+        self.assertEqual(a.value, b.value)
+
+
+class TestCodeTimer(unittest.TestCase):
+
+    def test_instantiation(self):
+        try:
+            utils.CodeTimer()
+        except Exception:
+            self.fail("An exception was raised when instantiating the class")
+
+    def test_instantiation_with_label(self):
+        try:
+            utils.CodeTimer("Some Timer")
+        except Exception:
+            self.fail("An exception was raised when instantiating the class")
+
+    def test_str(self):
+        ct = utils.CodeTimer()
+        self.assertIn("Timer:", str(ct))
+
+    def test_start(self):
+        ct = utils.CodeTimer()
+        ct.start()
+        self.assertIsNotNone(ct.start_t)
+        self.assertIsNotNone(ct.prev_t)
+        self.assertIsNone(ct.diff)
+        self.assertIsNone(ct.stop_t)
+        self.assertTrue(ct.running)
+
+    def test_stop(self):
+        ct = utils.CodeTimer()
+        ct.start()
+        retval = ct.stop()
+        self.assertIsInstance(ct.stop_t, dt.datetime)
+        self.assertIsInstance(ct.diff, dt.timedelta)
+        self.assertFalse(ct.running)
+        self.assertIsInstance(retval, dt.timedelta)
+
+    def test_stop_with_label(self):
+        ct = utils.CodeTimer("My Label")
+        ct.start()
+        ct.stop()
+
+    def test_stop_with_label_override(self):
+        ct = utils.CodeTimer("My Label")
+        ct.start()
+        ct.stop("label override")
+
+    def test_reset(self):
+        ct = utils.CodeTimer()
+        ct.start()
+        self.assertTrue(ct.running)
+        ct.reset()
+        self.assertTrue(ct.running)
+        self.assertIsNone(ct.diff)
+        self.assertIsNone(ct.stop_t)
+
+    def test_lap(self):
+        ct = utils.CodeTimer()
+        ct.start()
+        time.sleep(1)
+        diff = ct.lap()
+        self.assertAlmostEqual(diff.total_seconds(), 1, delta=0.6)
+        self.assertIsInstance(ct.stop_t, dt.datetime)
+        time.sleep(1)
+        diff = ct.lap()
+        self.assertAlmostEqual(diff.total_seconds(), 2, delta=0.6)
+        self.assertIsInstance(ct.stop_t, dt.datetime)
+
+    def test_lap_with_label(self):
+        ct = utils.CodeTimer("My Label")
+        ct.start()
+        ct.lap()
+
+    def test_lap_with_label_override(self):
+        ct = utils.CodeTimer("My Label")
+        ct.start()
+        ct.lap("label override")
+
+    def test_delta(self):
+        ct = utils.CodeTimer()
+        ct.start()
+        time.sleep(1)
+        diff = ct.delta()
+        self.assertAlmostEqual(diff.total_seconds(), 1, delta=0.6)
+        self.assertIsInstance(ct.stop_t, dt.datetime)
+        time.sleep(1)
+        diff = ct.delta()
+        self.assertAlmostEqual(diff.total_seconds(), 1, delta=0.6)
+        self.assertIsInstance(ct.stop_t, dt.datetime)
+
+    def test_delta_with_label(self):
+        ct = utils.CodeTimer("My Label")
+        ct.start()
+        ct.delta()
+
+    def test_delta_with_label_override(self):
+        ct = utils.CodeTimer("My Label")
+        ct.start()
+        ct.delta("label override")
+
+    def test_stopping_timer_before_its_started_raises_runtime_error(self):
+        ct = utils.CodeTimer("My Label")
+        with self.assertRaises(RuntimeError):
+            ct.stop()
+
+    def test_lapping_timer_before_its_started_raises_runtime_error(self):
+        ct = utils.CodeTimer("My Label")
+        with self.assertRaises(RuntimeError):
+            ct.lap()
+
+    def test_deltaing_timer_before_its_started_raises_runtime_error(self):
+        ct = utils.CodeTimer("My Label")
+        with self.assertRaises(RuntimeError):
+            ct.delta()
+
+
+class TestHexversToStr(unittest.TestCase):
+
+    known_values = (
+        (34014960, '2.7.6.f0'),
+        (50660080, '3.5.2.f0'),
+    )
+
+    def test_known_values(self):
+        for hexvers, expected in self.known_values:
+            with self.subTest(hexvers=hexvers, expected=expected):
+                self.assertEqual(expected, utils.hexvers_to_str(hexvers))
+
+    def test_result_is_str(self):
+        self.assertIsInstance(utils.hexvers_to_str(), str)
+
+
+class TestPrintRed(unittest.TestCase):
+
+    @given(st.text(st.characters()))
+    def test_no_exceptions(self, val):
+        try:
+            utils.print_red(val)
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
+
+
+class TestCprint(unittest.TestCase):
+
+    @given(st.text(st.characters()))
+    def test_exceptions(self, val):
+        try:
+            utils.cprint(val, 'r')
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
+
+
+class TestPrintSection(unittest.TestCase):
+
+    @given(st.text(st.characters()), st.integers())
+    def test_exceptions(self, text, style):
+        try:
+            utils.print_section(text, style)
+        except ValueError:
+            pass
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
+
+    @given(st.text(st.characters()))
+    def test_styles(self, text):
+        for style in [1, 2, 3]:
+            try:
+                utils.print_section(text, style)
+            except Exception as err:
+                err_txt = "Non-expected exception raised: {}"
+                raise AssertionError(err_txt.format(err))
+
+
+class TestPrintInput(unittest.TestCase):
+
+    @given(st.text(st.characters()))
+    def test_exceptions(self, text):
+        try:
+            utils.print_input(text)
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
+
+
+class TestProgressBar(unittest.TestCase):
+
+    def test_exceptions(self):
+        try:
+            utils.progress_bar(10, 10, 10)
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
+
+
+def raise_(exception):
+    """ Used only in the lambda functions for testing ``try_again``. """
+    raise exception

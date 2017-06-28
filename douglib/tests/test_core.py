@@ -16,8 +16,11 @@ Created on Wed May 14 15:29:34 2014
 import os.path
 import unittest
 import random
+import math
 
 # Third-Party
+from hypothesis import given
+from hypothesis import strategies as st
 
 # Package / Application
 from .. import core
@@ -68,6 +71,16 @@ class RoundToMultiple(unittest.TestCase):
             result = core.round_to_multiple(x, multiple)
             self.assertAlmostEqual(value, result)
 
+    @given(st.floats(), st.floats())
+    def test_exceptions(self, x, y):
+        try:
+            core.round_to_multiple(x, y)
+        except (ArithmeticError, ValueError):
+            return
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
+
 
 class Rescale(unittest.TestCase):
     """ Unit Testing of the rescale function """
@@ -87,6 +100,19 @@ class Rescale(unittest.TestCase):
         for x, orig_range, new_range, expected_result in self.known_values:
             result = core.rescale(x, orig_range, new_range)
             self.assertAlmostEqual(expected_result, result)
+
+    @given(st.floats(),
+           st.tuples(st.floats(), st.floats()),
+           st.tuples(st.floats(), st.floats()),
+           )
+    def test_exceptions(self, x, orig, new):
+        try:
+            core.rescale(x, orig, new)
+        except ArithmeticError:
+            return
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
 
 
 class Clip(unittest.TestCase):
@@ -108,6 +134,19 @@ class Clip(unittest.TestCase):
             result = core.clip(x, (x_min, x_max), clipval=clipval)
             self.assertEqual(expected, result)
 
+    @given(st.floats(),
+           st.tuples(st.floats(), st.floats()),
+           st.tuples(st.floats(), st.floats())
+           )
+    def test_exceptions(self, x, _range, clipval):
+        try:
+            core.clip(x, _range, clipval)
+        except ArithmeticError:
+            return
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
+
 
 class Threshold1DArray(unittest.TestCase):
     """ Unit Testing of the threshold_1d_array function """
@@ -124,6 +163,44 @@ class Threshold1DArray(unittest.TestCase):
         for y, array, expected_result in self.known_values:
             result = core.threshold_1d_array(array, y)
             self.assertAlmostEqual(expected_result, result)
+
+    @given(st.lists(st.floats()), st.floats())
+    def test_exceptions(self, array, y):
+        allowed_exceptions = (ValueError, IndexError, ZeroDivisionError)
+        try:
+            core.threshold_1d_array(array, y)
+        except allowed_exceptions:
+            return
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
+
+    def test_empty_array_raises_index_error(self):
+        with self.assertRaises(ValueError):
+            core.threshold_1d_array([], 0)
+
+
+class TestInterpolate1DArray(unittest.TestCase):
+
+    @given(st.lists(st.floats()), st.floats())
+    def test_exceptions(self, array, x):
+        allowed_exceptions = (ValueError, IndexError, OverflowError)
+        try:
+            core.interpolate_1d_array(array, x)
+        except allowed_exceptions:
+            return
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
+
+    def test_empty_array_raises_index_error(self):
+        with self.assertRaises(IndexError):
+            core.interpolate_1d_array([], 0)
+
+    @given(st.lists(st.floats(), min_size=2))
+    def test_x_inf_raises_overflow_error(self, array):
+        with self.assertRaises(OverflowError):
+            core.interpolate_1d_array(array, math.inf)
 
 
 class PickXatY(unittest.TestCase):
@@ -147,9 +224,16 @@ class PickXatY(unittest.TestCase):
             result = core.pick_x_at_y(xy_array, y)
             self.assertAlmostEqual(expected_result, result)
 
-    @unittest.skip("demonstrating skipping")
-    def test_skip_example(self):
-        self.fail("shouldn't ever get here")
+    @given(st.lists(st.tuples(st.floats(), st.floats())), st.floats())
+    def test_exceptions(self, xy_array, y):
+        allowed_exceptions = (ValueError, IndexError, ZeroDivisionError)
+        try:
+            core.pick_x_at_y(xy_array, y)
+        except allowed_exceptions:
+            pass
+        except Exception as err:
+            err_txt = "Non-expected exception raised: {}"
+            raise AssertionError(err_txt.format(err))
 
 
 class TestReservoirSampling(unittest.TestCase):

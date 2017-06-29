@@ -512,6 +512,8 @@ def print_input(text):
     prepend = ">>> "
 #    if type(text) is not str:
 #        raise TypeError("Input must be a string.")
+    if text == "":
+        text = "\n"
     if text[-1] != "\n":
         text = "{}\n".format(text)
 

@@ -63,6 +63,10 @@ class TestEngineeringNotationKnownValues(unittest.TestCase):
         with self.assertRaises(KeyError):
             core.from_engineering_notation('1.7q')
 
+    def test_extreme_value(self):
+        self.assertEqual(core.to_engineering_notation(6.3e28), "63000Y")
+        self.assertEqual(core.to_engineering_notation(2.3e-27), "0.0023y")
+
 
 class TestRoundToMultiple(unittest.TestCase):
     """ Known Value testing for round_to_multiple. """
@@ -228,6 +232,13 @@ class TestMaxDistSqrd(unittest.TestCase):
             with self.subTest(center=center, size=size, expected=expected):
                 result = core.max_dist_sqrd(center, size)
                 self.assertAlmostEqual(expected, result)
+
+    @given(st.tuples(st.floats(), st.floats()),
+           st.tuples(st.floats(), st.floats()))
+    def test_all_results_are_positive(self, center, size):
+        assume(all(abs(x) <= 1e20 for x in center + size))
+        result = core.max_dist_sqrd(center, size)
+        self.assertGreaterEqual(result, 0)
 
 
 class TestMaxDist(unittest.TestCase):
@@ -537,14 +548,9 @@ class TestReedholmDieNameToRC(unittest.TestCase):
                     )
 
     def test_known_values(self):
-        """ Verifies the known-value test """
-#        for name, rc in self.known_values:
-#            result = core.reedholm_die_to_rc(name)
-#            self.assertEqual(result, rc)
-        self.assertEqual(True,
-                         generic_test_equal('core.reedholm_die_to_rc',
-                                            self.known_values),
-                         )
+        for val, expected in self.known_values:
+            with self.subTest(val=val, expected=expected):
+                self.assertEqual(core.reedholm_die_to_rc(val), expected)
 
 
 class TestRCtoRadius(unittest.TestCase):
@@ -604,6 +610,10 @@ class TestSignificantSampleSize(unittest.TestCase):
             result = core.significant_sample_size(N, E=E, p=p, CI=ci)
             self.assertEqual(expected, result)
 
+    def test_mutually_exclusive_args_raises_runtime_error(self):
+        with self.assertRaises(RuntimeError):
+            core.significant_sample_size(100, E=0.95, p=0.2, CI=0.5, Z=1.96)
+
 
 class TestSortByColumn(unittest.TestCase):
     """ sort_by_column """
@@ -636,6 +646,13 @@ class TestSortByColumn(unittest.TestCase):
         with self.assertRaises(SyntaxError):
             core.sort_by_column(self.array, 0, hello=True, aaa=False)
 
+    def test_sort_inplace(self):
+        array = [[3, 5, 10], [2, 4, 1], [1, 7, 5]]
+        expected = [[1, 7, 5], [2, 4, 1], [3, 5, 10]]
+        result = core.sort_by_column(array, 0, inplace=True)
+        self.assertEqual(array, expected)
+        self.assertIsNone(result)
+
 
 class TestConvertRcdXyd(unittest.TestCase):
 
@@ -649,23 +666,3 @@ class TestConvertRcdXyd(unittest.TestCase):
             with self.subTest(rcd=rcd, expected=expected):
                 result = core.convert_rcd_xyd(rcd)
                 self.assertEqual(expected, result)
-
-
-def generic_test_equal(function, known_values):
-    """ Generic known-value testing of assertNotEqual """
-    for params in known_values:
-        expected_result = params[-1]
-        inputs = params[:-1]
-        eval_str = function + "("
-        for item in inputs:
-            if type(item) is str:
-                eval_str += "'" + item + "'" + ', '
-            else:
-                eval_str += str(item) + ', '
-        eval_str += ")"
-        result = eval(eval_str)
-        return result == expected_result
-
-
-if __name__ == "__main__":
-    unittest.main(exit=False, verbosity=1)

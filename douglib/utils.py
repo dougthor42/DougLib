@@ -50,15 +50,6 @@ class ObsoleteError(RuntimeError):
         return repr(self.value)
 
 
-class NewError(DougLibError):
-    """ Temporary new error for testing """
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
-
-
 # ---------------------------------------------------------------------------
 ### Classes
 # ---------------------------------------------------------------------------
@@ -521,6 +512,8 @@ def print_input(text):
     prepend = ">>> "
 #    if type(text) is not str:
 #        raise TypeError("Input must be a string.")
+    if text == "":
+        text = "\n"
     if text[-1] != "\n":
         text = "{}\n".format(text)
 
@@ -626,117 +619,3 @@ def try_again(funcs, args, kwargs, errors, raise_error=None):
             raise raise_error
 
     return retval
-
-
-# ---------------------------------------------------------------------------
-### main() and examples
-# ---------------------------------------------------------------------------
-def main():
-    """ Contains examples of some functions """
-    section_level = 0
-
-    # CodeTimer
-    print_section("CodeTimer", section_level)
-    codetimer = CodeTimer("Main Label")
-    codetimer.start()
-    import random
-
-    for _x in range(5):
-        time.sleep(random.random())
-        if _x >= 3:
-            codetimer.lap()
-        else:
-            codetimer.lap("Lap {}".format(_x))
-    print("<Ending Label>  ", end='')
-    codetimer.stop()
-
-
-    # Borg
-    print_section("Borg", section_level)
-    class testBorg(Borg):
-        def __init__(self):
-            self.a = 5
-
-    borg1 = testBorg()
-    borg2 = testBorg()
-    print("Two instances of Borg share the same data value but are different")
-    print("memory locations:")
-    print("id(borg1): {}".format(id(borg1)), end='\t\t')
-    print("id(borg2): {}".format(id(borg2)))
-    print("borg1.a is: {}".format(borg1.a), end='\t\t')
-    print("borg2.a is now: {}".format(borg2.a))
-    print("Setting borg1.a to 15")
-    borg1.a = 15
-    print("borg1.a is now: {}".format(borg1.a), end='\t\t')
-    print("borg2.a is now: {}".format(borg2.a))
-
-    # Singleton
-    print_section("Singleton", section_level)
-    class testSingleton(Singleton):
-        def __init__(self):
-            self.a = 1
-
-    singleton1 = testSingleton()
-    singleton2 = testSingleton()
-    print("Only one instance of a singleton is ever created:")
-    print("id(singleton1): {}".format(id(singleton1)), end='\t')
-    print("id(singleton2): {}".format(id(singleton2)))
-    print("singleton1.a is {}".format(singleton1.a), end='\t\t')
-    print("singleton2.a is {}".format(singleton2.a))
-    print("Setting singleton1.a to 15")
-    singleton1.a = 15
-    print("singleton1.a is {}".format(singleton1.a), end='\t\t')
-    print("singleton2.a is {}".format(singleton2.a))
-
-
-    # hexvers_to_str
-    print_section("hexvers_to_str", section_level)
-    print(hexvers_to_str(0x03040000))
-
-    # print_red
-    print_section("print_red", section_level)
-    print_red("Red Text")
-
-    # cprint
-    print_section("cprint", section_level)
-    cprint("cprint Cyan", 'c')
-    cprint("cprint Blue", 'b')
-
-    # unjoin_path
-    print_section("unjoin_path", section_level)
-    path = "C:\\Temp\\my_file.txt"
-    print("Spliting a Path: `{}`".format(path))
-    unjoined = unjoin_path(path)
-    print(unjoined)
-    joined = os.path.join(*unjoined)
-    print("and rejoining it: `{}`".format(joined))
-
-    # print_section
-    print_section("print_section", section_level)
-    print_section("major section, lvl 3", 3)
-    print_section("section, lvl 2", 2)
-    print_section("sub section, lvl 1", 1)
-    print_section("sub sub section, lvl 0", 0)
-
-    # print_input
-    print_section("print_input", section_level)
-    print_input("range(5)")
-
-    # print_and_exec
-    print_section("print_and_exec", section_level)
-    print_and_exec("range(5)")
-
-    # try_again
-    def make_trouble(a=0):
-        print("a = `{}`   {}".format(a, datetime.datetime.now()))
-        if a > 10:
-            return a
-        else:
-            raise ValueError("oh no!")
-
-
-    errors = [ValueError] * 5
-    args = [1, 2, 9, 11, 12]
-    funcs = [make_trouble] * 5
-    a = try_again(funcs, args, [None] * 5, errors)
-    print(a)

@@ -64,18 +64,6 @@ import inspect
 from . import utils
 
 
-def debug(func=None, *, prefix=''):
-    if func is None:
-        return functools.partial(debug, prefix=prefix)
-
-    msg = prefix + func.__qualname__
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        print(msg)
-        return func(*args, **kwargs)
-    return wrapper
-
-
 # ---------------------------------------------------------------------------
 ### Decorators
 # ---------------------------------------------------------------------------
@@ -140,20 +128,6 @@ class Decorator(object):
     @abc.abstractmethod
     def __str__(self):
         pass
-
-
-class ExampleDecorator(Decorator):
-    """ ExampleDecorator docstring """
-    def __init__(self, func):
-        # Need to first call the parent __init__ method
-        Decorator.__init__(self, func)
-
-    def __call__(self, *args, **kwargs):
-        # This is where the decorator code goes.
-        return self.func(*args, **kwargs)
-
-    def __str__(self):
-        return "ExampleDecorator"
 
 
 class EnterExit(Decorator):
@@ -243,7 +217,9 @@ class Cached(Decorator):
         self.cache = {}
 
     def __call__(self, *args):
-        if not isinstance(args, collections.Hashable):
+        try:
+            hash(args)
+        except TypeError:
             # uncacheable. a list, for instance.
             # better to not cache than blow up.
             return self.func(*args)
@@ -289,7 +265,9 @@ class TimeCached(Decorator):
         def timecached(*args, **kwargs):
             import datetime
             now = datetime.datetime.now()
-            if not isinstance(args, collections.Hashable):
+            try:
+                hash(args)
+            except TypeError:
                 # uncacheable. a list, for instance.
                 # better to not cache than blow up.
                 return self.func(*args)
@@ -491,7 +469,7 @@ class MinPythonVersion(Decorator):
         @functools.wraps(self.func)
         def version_checked(*args, **kwargs):
             error_str = "'{}' requires Python version {} or higher."
-            py_vers = hexvers_to_str(self.min_version)
+            py_vers = utils.hexvers_to_str(self.min_version)
             if sys.hexversion < self.min_version:
                 raise RuntimeError(error_str.format(self.func.__name__,
                                                     py_vers))

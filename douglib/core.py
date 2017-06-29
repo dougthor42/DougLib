@@ -140,7 +140,7 @@ def sort_by_column(big_list, *args, **kwargs):
 
     Examples
     --------
-    >>> my_array = [[3,5],[2,4],[1,7]]
+    >>> my_array = [[3 ,5], [2, 4], [1, 7]]
     >>> sort_by_column(my_array, 1)     # sort by column 1 (2nd col) and copy
     [[2, 4], [3, 5], [1, 7]]
     >>> sort_by_column(my_array, 1, inplace=True)   # modifies my_array
@@ -517,6 +517,7 @@ def pick_x_at_y(xy_array, y):
     return x
 
 
+# Why is this obsolete?
 @decorators.Obsolete
 def nanpercentile(a, percentile):
     """

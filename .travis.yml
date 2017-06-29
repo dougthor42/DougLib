@@ -31,7 +31,7 @@ install:
 script:
   - echo "----- script -----"
   - python -c "import sys;print(sys.version);print(sys.path)"
-  - green douglib -vvv --run-coverage
+  - green -vvv -s 1 --quiet-stdout --run-coverage douglib
 
 after_success:
   - echo "----- after_success -----"

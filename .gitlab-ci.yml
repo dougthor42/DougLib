@@ -47,7 +47,7 @@ test:
     - python
   script:
     - call %BUILD_DIR%\Scripts\activate.bat
-    - green -vvv -s 1 -W -t --quiet-stdout douglib
+    - green -vvv -s 1 -W -t --quiet-stdout --run-coverage douglib
 
 build:
   stage: build

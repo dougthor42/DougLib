@@ -584,7 +584,8 @@ class TestOSRestricted(unittest.TestCase):
                 pass
 
     def test_calling(self):
-        @dec.OSRestricted('Windows')
+        valid = platform.system()
+        @dec.OSRestricted(valid)
         def dummy():
             pass
         try:

@@ -217,7 +217,9 @@ class Cached(Decorator):
         self.cache = {}
 
     def __call__(self, *args):
-        if not isinstance(args, collections.Hashable):
+        try:
+            hash(args)
+        except TypeError:
             # uncacheable. a list, for instance.
             # better to not cache than blow up.
             return self.func(*args)
@@ -263,7 +265,9 @@ class TimeCached(Decorator):
         def timecached(*args, **kwargs):
             import datetime
             now = datetime.datetime.now()
-            if not isinstance(args, collections.Hashable):
+            try:
+                hash(args)
+            except TypeError:
                 # uncacheable. a list, for instance.
                 # better to not cache than blow up.
                 return self.func(*args)
@@ -465,7 +469,7 @@ class MinPythonVersion(Decorator):
         @functools.wraps(self.func)
         def version_checked(*args, **kwargs):
             error_str = "'{}' requires Python version {} or higher."
-            py_vers = hexvers_to_str(self.min_version)
+            py_vers = utils.hexvers_to_str(self.min_version)
             if sys.hexversion < self.min_version:
                 raise RuntimeError(error_str.format(self.func.__name__,
                                                     py_vers))
